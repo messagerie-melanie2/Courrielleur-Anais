@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/messengercompose.css" type="text/css"?>
+<?xml-stylesheet href="chrome://anais/skin/anaismozdlg.css" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://anais/locale/anais.dtd">
+
+<window title="&rechsdlg.titre;"
+        id="anais-rechsdlg"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="initRechsDlg();">
+
+  <script type="application/x-javascript" src="chrome://anais/content/anaisrechsdlg.js"/>
+  <script type="application/x-javascript" src="chrome://anais/content/anaismozcache.js"/>
+  <script type="application/x-javascript" src="chrome://anais/content/anaismozutils.js"/>
+
+  <hbox flex="1"/>
+
+  <hbox>
+    <hbox flex="1"/>
+    <image src="chrome://messenger/skin/accountcentral/search-messages.png"/>
+
+    <hbox flex="1"/>
+    <description>&rechsdlg.rechercheencours;</description>
+    <hbox flex="1"/>
+    <hbox flex="1"/>
+  </hbox>
+
+  <hbox flex="1"/>
+
+  <hbox>
+    <hbox flex="1"/>
+    <button id="dlgrechs-btannuler"
+            label="&dlgrechs.btannuler;"
+            accesskey="&dlgrechs.btannuler.key;"
+            oncommand="rechsdlgAnnuler();"/>
+    <hbox flex="1"/>
+  </hbox>
+
+</window>

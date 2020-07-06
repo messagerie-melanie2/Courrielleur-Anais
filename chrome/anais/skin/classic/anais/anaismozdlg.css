@@ -1,0 +1,206 @@
+
+#anaismozdlg{
+  width:600px;
+  height:400px;
+}
+
+
+
+/* height:25px; -> 41px; avec bouton sous thunderbird*/ 
+#anaismoz-toolbar{
+  height:41px;
+  /*height:32px;*/
+}
+toolbarseparator{
+  height:41px;
+  /*height:32px;*/
+}
+
+#anaismoz-bandeau{
+  height:22px;
+  background:rgb(128,128,128);
+  font-family:arial;
+  font-size:16px;
+  font-weight:bold;
+  color:white;
+  margin-top:2px;
+  margin-bottom:2px;
+}
+
+
+
+treecols{
+  background:rgb(250,255,245);
+}
+.tree-rows{
+  background:rgb(250,255,245);
+}
+
+#anaismoz-arbre>treechildren::-moz-tree-cell-text{
+margin-left:8px;
+}
+
+#anaismoz-arbre>treechildren::-moz-tree-cell-text{
+margin-left:4px;
+}
+
+#anaismoz-boites>treechildren::-moz-tree-cell-text{
+margin-left:4px;
+}
+
+#anaismoz-dest>treechildren::-moz-tree-cell-text{
+margin-left:4px;
+}
+
+
+treecol{
+  font-family:arial;
+  font-size:12px;
+  font-weight:bold;
+}
+#boites-img{
+  min-width:20px;
+  max-width:20px;
+}
+#boites-cn{
+  min-width:60pt;
+
+}
+#boites-tel{
+  min-width:20pt;
+  max-width:150pt;
+}
+
+.anaismozdlg-bttypes{
+  font-family:arial;
+  font-size:12px;
+  font-weight:600;
+}
+
+#anaismoz-dest-type{
+  min-width:40px;
+  max-width:40px;
+}
+
+#anaismoz-btlegende {
+  list-style-image: url("chrome://anais/skin/img/toolbarimg.gif");
+  -moz-image-region: rect(0px 144px 16px 128px);  
+  -moz-box-orient: vertical;
+}
+
+#anaismoz-btabout {
+  list-style-image: url("chrome://anais/skin/img/toolbarimg.gif");
+  -moz-image-region: rect(0px 96px 16px 80px);  
+  -moz-box-orient: vertical;
+}
+
+#anaismoz-btprop {
+  list-style-image: url("chrome://anais/skin/img/toolbarimg.gif");
+  -moz-image-region: rect(0px 32px 16px 16px);  
+  -moz-box-orient: vertical;
+}
+#anaismoz-btprop[disabled=true]{
+  -moz-image-region: rect(0px 32px 16px 16px);  
+}
+
+#anaismoz-btcompose {
+  list-style-image: url("chrome://anais/skin/img/toolbarimg.gif");
+  -moz-image-region: rect(0px 64px 16px 48px);  
+  -moz-box-orient: vertical;
+}
+#anaismoz-btcompose[disabled=true]{
+  -moz-image-region: rect(0px 64px 16px 48px);  
+}
+
+#anaismoz-btpauline{
+  list-style-image: url("chrome://anais/skin/img/annuaire16.png");
+  -moz-image-region: rect(0px 16px 16px 0px);  
+  -moz-box-orient: vertical;
+}
+
+#anaismoz-btpauline[disabled=true]{
+  -moz-image-region: rect(0px 16px 16px 0px);  
+}
+
+#anais-rechtxt{
+  min-width:300px;
+  border-style:none;
+  border-width:0px;
+}
+
+#anais-rechlib{
+  margin-top:6px;
+}
+
+#anais-rechbt{
+  list-style-image: url("chrome://anais/skin/img/btrech.gif");
+  -moz-image-region: rect(0px 16px 16px 0px);  
+  -moz-box-orient: vertical;
+}
+#anais-rechbt[disabled]{
+  list-style-image: url("chrome://anais/skin/img/btrechoff.gif");
+}
+
+
+#anais-dlgrechs{
+  min-width:350px;
+}
+
+#dlgrechs-cadre{
+  margin:10px;
+}
+
+#dlgrechs-esp{
+  height:10px;
+}
+
+#anais-rechsdlg{
+  width:250px;
+  height:90px;
+}
+
+#anaismoz-libfavoris{
+  margin-top:8px;
+  font-family:arial;
+  font-size:12px;
+  font-weight:600;
+}
+
+  
+#anaismoz-favoris{
+  border-style:none;
+  border-width:0px;
+  height:24px;
+}
+#anaismoz-favoris hbox{
+  background:rgb(250,255,245);
+}
+
+#anaismoz-btfavoris{
+  -moz-appearance:button;
+  height:20px;
+  width:20px;
+  background-color:rgb(180,70,70);
+  margin-bottom:2px;
+  margin-right:2px;
+  margin-top:2px;
+}
+  
+
+#editfavoris-liste{
+  margin:10px;
+  
+}
+
+#anais-editfavoris>description{
+  margin-left:12px;
+  margin-top:6px;
+}
+
+
+/* participants */
+#anaismoz-parts-type{
+  width:60px;
+}
+
+

@@ -1,0 +1,61 @@
+
+#anaisdlgpropbal{
+  
+   background:rgb(119,136,153);
+   
+   min-width:400px;
+   min-height:300px;
+}
+
+#anaisdlgpropbal-cadre{
+  margin-bottom: 4px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+  
+}
+
+.titre-onglet{
+  font-family:arial;
+  font-size:12px;
+  font-weight:600;
+}
+
+tabpanel,textbox,tab{
+  background:rgb(250,255,245);
+}
+
+groupbox {
+
+  -moz-appearance: none;
+}
+
+tab{
+  font-family:arial;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.propbal-url{
+  text-decoration:underline;
+  cursor:pointer;
+  color:rgb(0,0,255);
+}
+
+treecols{
+  background:rgb(250,255,245);
+}
+.tree-rows{
+  background:rgb(250,255,245);
+}
+
+treecol{
+  font-family:arial;
+  font-size:12px;
+  font-weight:bold;
+}
+
+#propbal-listei{
+  width:22px;
+}
+

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://anais/skin/anaismoz.css" type="text/css"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://anais/locale/anais.dtd" >
+
+<overlay  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="chrome://anais/content/messageWindow-overlay.js"/>
+  <script type="application/x-javascript" src="chrome://anais/content/anaismozutils.js"/>
+
+
+  <popup id="emailAddressPopup">
+    <menuseparator/>
+    <menuitem label="&anaismoz.menuprop;"
+              accesskey="&anaismoz.menuprop.cle;"
+              oncommand="anaisMsgPropDest(document.popupNode);"/>
+
+  </popup>
+
+</overlay>

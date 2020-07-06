@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/messengercompose.css" type="text/css"?>
+<?xml-stylesheet href="chrome://anais/skin/anaisdlgpropbal.css" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://anais/locale/anais.dtd">
+
+<window id="anaisdlgpropbal"
+        title="&anaisdlgpropbal.titre;"
+        persist="screenX screenY"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="AnaisInitDlgPropBal();">
+
+
+  <script type="application/x-javascript" src="chrome://anais/content/anaismozutils.js"/>
+  <script type="application/x-javascript" src="chrome://anais/content/anaisdlgpropbal.js"/>
+
+  <keyset id="keys">
+    <key keycode="VK_ESCAPE" oncommand="window.close();"/>
+  </keyset>
+
+  <!-- menu contextuel pour la liste des membres d'une liste -->
+  <popupset>
+    <menupopup id="anaisdlgpropbal-contextMembre" onpopupshowing="return anaisPropContext(event,'propbal-membres');">
+      <menuitem label="&anaisdlgpropbal.btpropbal;" oncommand="anaisDlgPropBal('propbal-membres');"/>
+    </menupopup>
+  </popupset>
+
+  <!-- menu contextuel pour les listes dont une boite est membre -->
+  <popupset>
+    <menupopup id="anaisdlgpropbal-contextLst" onpopupshowing="return anaisPropContext(event,'propbal-listes');">
+      <menuitem label="&anaisdlgpropbal.btpropbal;" oncommand="anaisDlgPropBal('propbal-listes');"/>
+    </menupopup>
+  </popupset>
+
+  <vbox id="anaisdlgpropbal-cadre" flex="1">
+    <hbox id="anaisdlgpropbal-contenu" flex="1">
+      <vbox id="anaisdlgpropbal-msg" flex="1">
+        <spacer flex="1"/>
+          <hbox flex="1">
+            <spacer flex="1"/>
+            <textbox id="anaisdlgpropbal-lib" flex="1" value="&anaisdlgpropbal.libmsg;" multiline="true" readonly="true"/>
+            <spacer flex="1"/>
+          </hbox>
+        <spacer flex="1"/>
+      </vbox>
+    </hbox>
+    <spacer height="4"/>
+    <hbox>
+      <box flex="1"/>
+      <button id="anaisdlgpropbal-btfermer"
+                label="&anaisdlgpropbal.btfermer;"
+                accesskey="&anaisdlgpropbal.btfermer.key;"
+                oncommand="close();"/>
+    </hbox>
+  </vbox>
+</window>

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://anais/skin/anaismoz.css" type="text/css"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://anais/locale/anais.dtd">
+
+<overlay  xmlns:nc="http://home.netscape.com/NC-rdf#"
+          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="chrome://anais/content/messenger-overlay.js"/>
+  <script type="application/x-javascript" src="chrome://anais/content/messageWindow-overlay.js"/>
+  <script type="application/x-javascript" src="chrome://anais/content/anaismozutils.js"/>
+  <script type="application/x-javascript" src="chrome://anais/content/anaismozcache.js"/>
+
+
+  <popup id="emailAddressPopup">
+    <menuseparator/>
+    <menuitem label="&anaismoz.menuprop;"
+              accesskey="&anaismoz.menuprop.cle;"
+              oncommand="anaisMsgPropDest(document.popupNode);"/>
+
+  </popup>
+
+
+  <!-- ajoute le bouton 'Annuaire'  -->
+  <!-- le bouton est insere correctement dans la barre d'outils au demarrage par code -->
+  <!-- Thunderbird -->
+  <toolbarpalette id="MailToolbarPalette">
+  <toolbarbutton class="toolbarbutton-1"
+                 id="btanais"
+                 label="&btanais.lib;"
+                 tooltiptext="&btanais.bulle;"
+                 oncommand="OuvreAnais()"/>
+  </toolbarpalette>
+
+
+</overlay>

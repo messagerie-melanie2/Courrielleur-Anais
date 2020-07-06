@@ -1,0 +1,83 @@
+
+#anaismoz-dest {
+  list-style-image: url("chrome://anais/skin/img/annuaire.png"); 
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+#anaismoz-dest:hover {
+  -moz-image-region: rect(0px 16px 16px 0px);
+} 
+
+#anaismoz-dest[disabled] {
+  -moz-image-region: rect(0px 16px 16px 0px);
+} 
+
+toolbar[iconsize="small"] #anaismoz-dest {
+  list-style-image: url("chrome://anais/skin/img/annuaire.png");
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+toolbar[iconsize="small"] #anaismoz-dest:hover {
+  -moz-image-region: rect(0px 16px 16px 0px);
+} 
+
+toolbar[iconsize="small"] #anaismoz-dest[disabled] {
+  -moz-image-region: rect(0px 16px 16px 0px) 
+} 
+
+
+#btanais {
+  list-style-image: url("chrome://anais/skin/img/annuaire.png");
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+#btanais:hover {
+  -moz-image-region: rect(0px 16px 16px 0px);
+} 
+
+#btanais[disabled] {
+  -moz-image-region: rect(0px 16px 16px 0px);
+} 
+
+toolbar[iconsize="small"] #btanais {
+  list-style-image: url("chrome://anais/skin/img/annuaire.png");
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+toolbar[iconsize="small"] #btanais:hover {
+  -moz-image-region: rect(0px 16px 16px 0px); 
+} 
+
+toolbar[iconsize="small"] #btanais[disabled] {
+  -moz-image-region: rect(0px 16px 16px 0px);
+} 
+
+/* edition des participants */
+#attendees-container > .attendee-spacer-top{
+  height:10px;
+}
+
+.anais-btparts{
+  list-style-image: url("chrome://anais/skin/img/annuaire.png");
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+.anais-btparts>hbox>label{
+  padding-left: 4px;
+}
+
+
+#anaismoz-menudest{
+  list-style-image: url("chrome://anais/skin/img/annuaire.png");
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+#anais-menu{
+  list-style-image: url("chrome://anais/skin/img/annuaire.png");
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+
+#appmenu_anais-menu{
+  list-style-image: url("chrome://anais/skin/img/annuaire.png");
+  -moz-image-region: rect(0px 16px 16px 0px);
+}

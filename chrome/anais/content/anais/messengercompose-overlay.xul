@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://anais/skin/anaismoz.css" type="text/css"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://anais/locale/anais.dtd">
+
+
+<overlay id="anais.compose" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="chrome://messenger/content/messengercompose/addressingWidgetOverlay.js"/>
+  <script type="application/x-javascript" src="chrome://anais/content/anaismozutils.js"/>
+  <script type="application/x-javascript" src="chrome://anais/content/messengercompose-overlay.js"/>
+
+  <!-- ajoute un raccourci clavier Ctrl+D depuis la fenetre de composition  -->
+  <keyset id="tasksKeys">
+    <key id="key_anaismoz_dest"  key="&anaismoz.dest.accesskey;" command="cmd_AnaismozDest" modifiers="accel"/>
+  </keyset>
+  <commandset id="composeCommands">
+    <command id="cmd_AnaismozDest" oncommand="cmdAnaismozDest()"/>
+  </commandset>
+
+  <menupopup id="taskPopup">
+    <menuitem label="&anaismoz.dest.lib;"
+              id="anaismoz-menudest"
+              accesskey="&anaismoz.dest.accesskey;"
+              class="menuitem-iconic"
+              insertbefore="tasksMenuAddressBook"
+              command="cmd_AnaismozDest"/>
+  </menupopup>
+
+
+  <!-- ajoute le bouton 'Destinataires'  -->
+  <!-- le bouton est insere correctement dans la barre d'outils au demarrage par code -->
+  <toolbarpalette id="MsgComposeToolbarPalette">
+    <toolbarbutton class="toolbarbutton-1"
+                   id="anaismoz-dest"
+                   label="&anaismoz.dest.lib;"
+                   tooltiptext="&anaismoz.dest.bulle;"
+                   command="cmd_AnaismozDest"/>
+  </toolbarpalette>
+
+
+</overlay>

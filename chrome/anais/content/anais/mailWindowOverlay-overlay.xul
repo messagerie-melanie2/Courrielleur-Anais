@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://anais/skin/anaismoz.css" type="text/css"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://anais/locale/anais.dtd">
+
+<overlay  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <!-- menu proprietes sur les adresses dans le corps d'un message -->
+  <popup id="mailContext" onpopupshown="anaisContextCorps();">
+    <menuitem id="anaismoz-propcorps"
+              label="&anaismozdlg.btpropbal;"
+              hidden="true"
+              oncommand="anaisMsgPropDestCorps(document.popupNode);"/>
+  </popup>
+
+  <!-- option 'Annuaire' dans le menu Outils -->
+  <menupopup id="taskPopup">
+    <menuitem label="&btanais.lib;"
+              id="anais-menu"
+              accesskey="&anais.menu.accesskey;"
+              insertbefore="addressBook"
+              class="menuitem-iconic"
+              oncommand="OuvreAnais()"/>
+  </menupopup>
+
+  <!-- menu application -->
+  <menupopup id="appmenu_taskPopup">
+    <menuitem label="&btanais.lib;"
+              id="appmenu_anais-menu"
+              accesskey="&anais.menu.accesskey;"
+              insertbefore="appmenu_addressBook"
+              class="menuitem-iconic"
+              oncommand="OuvreAnais()"/>
+  </menupopup>
+
+</overlay>

@@ -1,0 +1,150 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://anais/skin/legende.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://anais/locale/anais.dtd">
+
+<dialog title="&anaislegende.titre;"
+
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <keyset id="keys">
+    <key keycode="VK_ESCAPE" oncommand="window.close();"/>
+  </keyset>
+
+  <groupbox flex="1">
+    <caption label="&anaislegende.signifi;"/>
+
+    <grid flex="1">
+      <columns>
+        <column flex="5"/>
+        <column flex="1"/>
+        <column flex="1"/>
+      </columns>
+
+      <rows>
+        <spacer class="legende-esp"/>
+        <row>
+          <label class="titrecol" value="&anaislegende.col1;"/>
+          <label class="titrecol" value="&anaislegende.col2;"/>
+          <label class="titrecol" value="&anaislegende.col3;"/>
+        </row>
+        <spacer class="legende-esp"/>
+        <row>
+          <label value="&anaislegende.service;"/>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/bals.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+        </row>
+        <spacer class="legende-esp"/>
+        <row>
+          <label value="&anaislegende.unite;"/>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/balu.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/balu_l.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+        </row>
+        <spacer class="legende-esp"/>
+        <row>
+          <label value="&anaislegende.fonc;"/>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/balf.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/balf_l.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+        </row>
+        <spacer class="legende-esp"/>
+        <row>
+          <label value="&anaislegende.ressource;"/>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/balr.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/balr_l.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+        </row>
+        <spacer class="legende-esp"/>
+        <row>
+          <label value="&anaislegende.appli;"/>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/bala.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/bala_l.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+        </row>
+        <spacer class="legende-esp"/>
+        <row>
+          <label value="&anaislegende.indiv;"/>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/bali.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/bali_l.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+        </row>
+        <spacer class="legende-esp"/>
+        <row>
+          <label value="&anaislegende.liste;"/>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/ldis.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/ldis_l.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+        </row>
+        <spacer class="legende-esp"/>
+        <row>
+          <label value="&anaislegende.part;"/>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="chrome://anais/skin/img/refx.gif" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+          <hbox>
+          <spacer flex="1"/>
+          <image src="" width='16' height='16'/>
+          <spacer flex="1"/>
+          </hbox>
+        </row>
+      </rows>
+    </grid>
+
+  </groupbox>
+
+</dialog>

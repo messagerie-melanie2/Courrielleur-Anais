@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/messengercompose.css" type="text/css"?>
+<?xml-stylesheet href="chrome://anais/skin/anaismozdlg.css" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://anais/locale/anais.dtd">
+
+<window title="&editfavoris.titrelib;"
+        id="anais-editfavoris"
+        width="400px" height="100px"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="initDlgLibFavori();">
+
+  <script type="application/x-javascript" src="chrome://anais/content/favoris.js"/>
+  <script type="application/x-javascript" src="chrome://anais/content/anaismozutils.js"/>
+
+  <keyset id="keys">
+    <key keycode="VK_ESCAPE" oncommand="btLibFavoriAnnuler();"/>
+  </keyset>
+
+  <vbox flex="1">
+    <hbox flex="1"/>
+    <hbox>
+      <label value="&editfavoris-liblibelle;"/>
+      <textbox id="libelle" flex="1"/>
+    </hbox>
+    <hbox flex="1"/>
+  </vbox>
+
+  <hbox>
+    <hbox flex="1"/>
+    <button id="btvalider"
+            label="&dlgrechs.btvalider;"
+            accesskey="&dlgrechs.btvalider.key;"
+            tabindex="0"
+            default="true"
+            oncommand="btLibFavoriValider();"/>
+    <button id="btannuler"
+            label="&dlgrechs.btannuler;"
+            accesskey="&dlgrechs.btannuler.key;"
+            oncommand="btLibFavoriAnnuler();"/>
+  </hbox>
+
+</window>
