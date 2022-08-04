@@ -609,14 +609,14 @@ function anaisRechCheminLdap(mail,fnc){
 
   let httpRequest=new XMLHttpRequest();
 
-  //detection boîte partagee
+  //detection boite partagee
   let valeur=mail;
   let pos=valeur.indexOf(".-.");
   if (pos>0){
     valeur=valeur.substr(pos+3);
   }
   
-  //requête asynchrone
+  //requete asynchrone
   anaisDlgLibStatut("Interrogation du serveur...");
 
   httpRequest.onreadystatechange=function(){
