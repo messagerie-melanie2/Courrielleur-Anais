@@ -611,11 +611,11 @@ function anaisRechCheminLdap(mail,fnc){
 
   //detection boîte partagee
   let valeur=mail;
-  let pos=valeur.indexOf(".-.");
-  if (pos>0){
-    valeur=valeur.substr(pos+3);
+  let compos=SplitUserBalp(valeur);
+  if (compos && 2==compos.length){
+    valeur=compos[1];
   }
-  
+
   //requête asynchrone
   anaisDlgLibStatut("Interrogation du serveur...");
 
