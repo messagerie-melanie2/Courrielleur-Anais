@@ -410,7 +410,9 @@ function cm2ConstruitMenuFavoris(){
       let chemin=item.ValueUTF8;
       let node=gSourceAnais.GetTarget(item, gPredLibAnais, true);
       node=node.QueryInterface(Ci.nsIRDFLiteral);
-      let libelle=node.Value.trim();
+      
+      // #6521: Affichage des favoris dans Amande
+      let libelle=GetShortLibelle(node.Value.trim());
 
       let elem=document.createElement("menuitem");
       elem.setAttribute("label", libelle);
@@ -420,6 +422,13 @@ function cm2ConstruitMenuFavoris(){
       popup.appendChild(elem);
     }
   }
+}
+
+// #6521: Affichage des favoris dans Amande 
+//(on n'affiche pas les détails des noms de service dans la liste des favorits)
+function GetShortLibelle(libelle)
+{
+  return libelle.replace(/ *\([^)]*\) */g, "");
 }
 
 // construire dynamiquement la liste des favoris (boite d'édition - editfavoris-liste)
