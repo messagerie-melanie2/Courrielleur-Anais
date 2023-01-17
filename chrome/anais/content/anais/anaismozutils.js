@@ -624,7 +624,7 @@ function anaisRechCheminLdap(mail,fnc){
       case 4:
         let statut=0;
         try{
-          
+
           statut=httpRequest.status;
           
         } catch(ex1){

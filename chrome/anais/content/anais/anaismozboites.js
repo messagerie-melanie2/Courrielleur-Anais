@@ -743,6 +743,9 @@ function anaisSelectionBoite(chemin){
   }
   //retrouver l'index de la boîte et selectionner
   let nb=gBoitesView.NombreBoites();
+  if(nb==0)
+    return 0;
+  
   for (var i=0;i<nb;i++){
     let elem=gBoitesView.getBoite(i);
     let dn=elem.getAttribute("id");

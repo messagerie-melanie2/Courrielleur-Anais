@@ -572,6 +572,58 @@ function anaisBoitesEntite(event){
   let chemin=elem.getAttribute("id");
   anaisSetWaitCursor();
   
+  // Logs tests #5741: Modifier le comportement du clic droit/Atteindre l'entité
+  let attributes = elem.attributes;
+  for (let i = 0; i < attributes.length; i++) {
+    console.log(attributes.item(i).name + ": " + attributes.item(i).value);
+  }
+  //console.log(elem.innerHTML);
+
+  //#5741: Modifier le comportement du clic droit/Atteindre l'entité
+  let departmentNumber = "";
+  try{
+    // On récupère la valeur du label contenant le commonName
+    let ligne=elem.firstChild;
+    let cell=ligne.childNodes[1];
+    if(cell != null)
+      departmentNumber = cell.getAttribute("label").split(" - ")[1];
+    //format: DGPR/SRNH/SDCAP/PONSOH
+    console.log("departmentNumber: " + departmentNumber.toLowerCase());
+  }
+  catch(ex){}
+  let cheminAlias = "";
+  // chemin au format: "ldap://ldap.melanie2.i2/uid=xavier.caron,ou=ponsoh,ou=dreal auvergne-rhône-alpes,ou=dr,ou=melanie,ou=organisation,dc=equipement,dc=gouv,dc=fr
+  if(departmentNumber != "" && departmentNumber != null)
+  {
+    let departmentNumberArray = departmentNumber.toLowerCase().split("/");
+    let cheminOk = true;
+    for(let i = 0; i < departmentNumberArray.length; i++)
+    {
+      if(!chemin.includes(departmentNumberArray[i]))
+      {
+        console.log("Le chemin ne contient pas le departmentNumber !");
+        cheminOk = false;
+        break;
+      }
+    }
+    if(!cheminOk)
+    {
+      // Reconstruction manuelle du chemin.
+      let pathArray = chemin.split("/");
+      let secondPathArray = pathArray[3].split(",");
+      let thirdPathArray = "";
+      for(let i = departmentNumberArray.length-1; i >= 0; i--)
+      {
+        thirdPathArray+="ou="+departmentNumberArray[i]+",";
+      }
+      //Format uid=helene.chitry,ou=PONSOH,ou=SDCAP,ou=SRNH,ou=DGPR,ou=AC,ou=melanie,ou=organisation,dc=equipement,dc=gouv,dc=fr
+      cheminAlias = pathArray[0]+"//"+pathArray[2]+"/"+secondPathArray[0]+","+thirdPathArray+"ou=ac,ou=melanie,ou=organisation,dc=equipement,dc=gouv,dc=fr";
+      console.log("Chemin reconstruit: " + cheminAlias);
+    }
+  }
+  //#5741 FIN: Modifier le comportement du clic droit/Atteindre l'entité
+
+
   //cas chemin ldap absent -> recherche
   if ((null==chemin)||(""==chemin)){
     let cells=elem.getElementsByTagName("treecell");
@@ -589,7 +641,7 @@ function anaisBoitesEntite(event){
     return;
   }
   //traitement du chemin
-  anaisBoitesEntiteCh(chemin);
+  anaisBoitesEntiteCh(chemin,cheminAlias);
 }
 
 /**
@@ -599,25 +651,40 @@ function anaisBoitesEntite(event){
 *	@param chemin chemin ldap de la boîte
 *
 */
-function anaisBoitesEntiteCh(chemin){
-
+function anaisBoitesEntiteCh(chemin,cheminAlias="")
+{
   AnaisTrace("anaisBoitesEntiteCh chemin:"+chemin);
-
-  if (null==chemin){
+  if (null==chemin)
+  {
     anaisRestoreCursor();
     AnaisAfficheMsgIdGlobalErr("anaisdlg_ErrEntite");
     window.close();
     return;
   }
 
-  //conteneur parent
+  if(cheminAlias != "" && chercherConteneur(cheminAlias) == 1)
+    return;
+  else if(chercherConteneur(chemin) == 1)
+    return;
+  else
+  {
+    anaisRestoreCursor();
+    AnaisAfficheMsgIdGlobalErr("anaisdlg_ErrEntiteSel");
+    return;
+  }
+}
+
+// #5741 - Retourne 1 si on a trouvé et affiché un conteneur, et 0 sinon.
+function chercherConteneur(chemin)
+{
   let cheminpar=conteneurParent(chemin);
+  let conteneur=document.getElementById(cheminpar);
   AnaisTrace("anaisBoitesEntiteCh chemin parent:"+cheminpar);
-  
+
   //rechercher si conteneur present
-  let cont=document.getElementById(cheminpar);
-  if (null!=cont){
-    let parent=cont.parentNode;
+  if (null!=conteneur)
+  {
+    let parent=conteneur.parentNode;
     while (parent && parent.nodeName=="treechildren" && parent.id!="anaismoz-arbre-racine"){
       let elem=parent.parentNode;
       elem.setAttribute("open",true);
@@ -630,16 +697,16 @@ function anaisBoitesEntiteCh(chemin){
     
     //selection de la boîte dans la liste
     window.setTimeout(anaisSelectionBoite,1000,chemin);
-    return;
+    return 1;
   }
+
   //requête serveur asynchrone
   //operation vide -> retourne arborescence complete jusqu'au chemin demande
   let res=anaisReqSrvFnc("",cheminpar,null,anaisBoitesEntiteRap, chemin);
-  if (false==res){
-    anaisRestoreCursor();
-    AnaisAfficheMsgIdGlobalErr("anaisdlg_ErrEntiteSel");
-    return;
-  }
+  if (false==res)
+    return 0;
+
+  return 1;
 }
 
 /**
