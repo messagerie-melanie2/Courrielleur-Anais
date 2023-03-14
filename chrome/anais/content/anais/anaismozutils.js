@@ -611,9 +611,9 @@ function anaisRechCheminLdap(mail,fnc){
 
   //detection boite partagee
   let valeur=mail;
-  let compos=SplitUserBalp(valeur);
-  if (compos && 2==compos.length){
-    valeur=compos[1];
+  let pos=valeur.indexOf(".-.");
+  if (pos>0){
+    valeur=valeur.substr(pos+3);
   }
 
   //requete asynchrone
