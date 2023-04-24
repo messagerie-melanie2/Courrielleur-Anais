@@ -64,12 +64,7 @@ function initAnaisDlg(){
 
   //initialisation url du serveur à partir de la preference 'anais.anaismoz.urlserveur' 
   //url du serveur
-  if (Services.prefs.prefHasUserValue("anais.anaismoz.urlserveur")){
-    let val=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
-    if (val!=""){
-      gUrlScript=val;
-    }
-  }
+  gUrlScript=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
   
   //chemin courant
   if (Services.prefs.prefHasUserValue("anais.anaismoz.chemincourant")){
