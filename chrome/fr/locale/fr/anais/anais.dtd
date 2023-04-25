@@ -104,9 +104,9 @@
 <!ENTITY anais.apropos.lib3 "Publié le : &anais.datever;">
 
 
-<!-- pauline -->
+<!-- Annuaire Web -->
 <!ENTITY anaismoz-libpauline "Annuaire Web">
-<!ENTITY anaismoz-tippauline "Annuaire Web Pauline">
+<!ENTITY anaismoz-tippauline "Annuaire Web">
 <!ENTITY anaismozdlg.verspauline "Aller dans l'annuaire Web">
 
 <!-- Version -->
