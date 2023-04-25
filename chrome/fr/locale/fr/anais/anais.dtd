@@ -1,5 +1,5 @@
 <!-- messengercompose-overlay.xul -->
-<!ENTITY anaismoz.dest.lib "Contacts minist&#233;riels">
+<!ENTITY anaismoz.dest.lib "Annuaire">
 <!ENTITY anaismoz.dest.bulle "Ouvrir l'annuaire Amande">
 <!ENTITY anaismoz.dest.accesskey "D">
 <!ENTITY anaismoz.menuprop "Propri&#233;t&#233;s...">
@@ -13,7 +13,7 @@
 <!-- messenger-overlay.xul -->
 <!ENTITY anaismoz.menuprop "Propri&#233;t&#233;s...">
 <!ENTITY anaismoz.menuprop.cle "P">
-<!ENTITY btanais.lib "Contacts minist&#233;riels">
+<!ENTITY btanais.lib "Annuaire">
 <!ENTITY btanais.bulle "Ouvrir l'annuaire Amande">
 <!ENTITY anais.menu.accesskey "n">
 
@@ -41,7 +41,7 @@
 
 
 <!-- anaismozdlg.xul -->
-<!ENTITY anaismozdlg.titre "Contacts minist&#233;riels">
+<!ENTITY anaismozdlg.titre "Annuaire">
 <!ENTITY anaismozdlg.btvalider "Valider">
 <!ENTITY anaismozdlg.btvalider.key "V">
 <!ENTITY anaismozdlg.btannuler "Annuler">
@@ -135,7 +135,7 @@
 <!ENTITY editfavoris-liblibelle "Libell&#233;:">
 
 <!-- edition participants -->
-<!ENTITY anaisbtparts.lib "Contacts minist&#233;riels...">
+<!ENTITY anaisbtparts.lib "Annuaire...">
 <!ENTITY anaisbtparts.bulle "Ouvrir l'annuaire avec Anais">
 <!ENTITY anaismozdlg.btpartO "Obligatoire">
 <!ENTITY anaismozdlg.btpartO.key "O">
