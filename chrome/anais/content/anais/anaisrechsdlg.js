@@ -24,12 +24,7 @@ function initRechsDlg(){
   }
 
   //url du serveur
-  if (Services.prefs.prefHasUserValue("anais.anaismoz.urlserveur")){
-    let val=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
-    if (val!=""){
-      gUrlScript=val;
-    }
-  }
+  gUrlScript=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
 
   //en cas de fermeture avec case X
   window.arguments[0].res=false;
