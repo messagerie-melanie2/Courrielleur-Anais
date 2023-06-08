@@ -590,15 +590,21 @@ function anaisBoitesEntite(event){
   // chemin au format: "ldap://ldap.melanie2.i2/uid=xavier.caron,ou=ponsoh,ou=dreal auvergne-rhône-alpes,ou=dr,ou=melanie,ou=organisation,dc=equipement,dc=gouv,dc=fr
   if(departmentNumber != "" && departmentNumber != null)
   {
-    let departmentNumberArray = departmentNumber.toLowerCase().split("/");
+    // On doit split sur " " et sur "/" pour vérifier correctement la présence du dn dans le chemin.
+    let departmentNumberArray = departmentNumber.toLowerCase().split('/').join(' ').split(' ');
     let cheminOk = true;
     for(let i = 0; i < departmentNumberArray.length; i++)
     {
       if(!chemin.includes(departmentNumberArray[i]))
       {
-        console.log("Le chemin ne contient pas le departmentNumber !");
-        cheminOk = false;
-        break;
+        // On vérifie que ce n'est pas simplement un problème d'accents.
+        let normalizedDepartmentNumberPart = departmentNumberArray[i].normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if(!chemin.includes(normalizedDepartmentNumberPart))
+        {
+          console.log("Le chemin ne contient pas '" + normalizedDepartmentNumberPart + "'");
+          cheminOk = false;
+          break;
+        }
       }
     }
     if(!cheminOk)
