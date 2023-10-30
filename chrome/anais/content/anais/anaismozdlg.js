@@ -601,7 +601,8 @@ function anaisBoitesEntite(event){
     for(let i = 0; i < departmentNumberArray.length; i++)
     {
       // #7572 REV Ajout de l'exception pour les partenaires
-      if(!chemin.includes(departmentNumberArray[i]) && !chemin.includes("ou=partenaires"))
+      // #7962 Ajout exception mineqrdn pour les imports
+      if(!chemin.includes(departmentNumberArray[i]) && !chemin.includes("ou=partenaires") && !chemin.includes("mineqrdn"))
       {
         // On vérifie que ce n'est pas simplement un problème d'accents.
         let normalizedDepartmentNumberPart = departmentNumberArray[i].normalize("NFD").replace(/[\u0300-\u036f]/g, "");
