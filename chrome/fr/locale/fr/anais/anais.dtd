@@ -25,7 +25,7 @@
 <!ENTITY anaisdlgpropbal.libmsg "Veuillez patienter pendant la lecture des informations...">
 
 <!-- legende.xul -->
-<!ENTITY anaislegende.titre "L&#233;gende des ic&#244;nes des bo&#238;tes">
+<!ENTITY anaislegende.titre "L&#233;gende des ic&#244;nes">
 <!ENTITY anaislegende.signifi "Signification des ic&#244;nes">
 <!ENTITY anaislegende.col1 "Bo&#238;te &#224; lettres">
 <!ENTITY anaislegende.col2 "globale">
