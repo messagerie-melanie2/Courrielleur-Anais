@@ -23,12 +23,7 @@ function AnaisInitDlgPropBal(){
   dn=window.arguments[0].dn;
 
   //url du serveur
-  let val="";
-  if (Services.prefs.prefHasUserValue("anais.anaismoz.urlserveur"))
-    val=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
-  if (val!=''){
-    gUrlScript=val;
-  }
+  gUrlScript=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
 
   //requête asynchrone
   anaisSetWaitCursor();

@@ -11,7 +11,7 @@ const ANAIS_NS="http://anais.melanie2.i2/schema";
 
 
 //url du script serveur
-var gUrlScript="http://anais.s2.m2.e2.rie.gouv.fr/anaism2.php";
+var gUrlScript="http://mceweb2.si.minint.fr/anais/anaism2.php";
 
 
 /**

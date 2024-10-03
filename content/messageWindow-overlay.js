@@ -40,12 +40,7 @@ function anaisMsgPropAdr(emailAddressPopup){
   }
 
   //url du serveur
-  if (Services.prefs.prefHasUserValue("anais.anaismoz.urlserveur")){
-    let val=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
-    if ((val!=null)&&(val!='')){
-      gUrlScript=val;
-    }
-  }
+  gUrlScript=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
   
   let email=emailAddressPopup.getAttribute("emailAddress");
   

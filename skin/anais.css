@@ -1,0 +1,98 @@
+/* Base styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header styles */
+header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Search bar */
+.search-bar {
+    margin-right: 20px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Add styles for the button icons */
+.button-icon {
+    width: 20px;  /* Adjust the width as needed */
+    height: 20px; /* Adjust the height as needed */
+    vertical-align: middle; /* Align image with text */
+    margin-right: 5px; /* Space between image and text */
+}
+
+/* Button styles */
+.buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Splitter line */
+.splitter {
+    width: 2px; /* Adjust thickness of the line */
+    background-color: #ccc; /* Color of the splitter */
+    height: 30px; /* Height of the splitter */
+    margin: 0 10px; /* Space around the splitter */
+}
+
+/* Content styles */
+.content {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* List styles */
+.list {
+    width: 45%;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+/* Light theme styles */
+body.light {
+    background-color: #ffffff; /* Light background */
+    color: #000000; /* Dark text */
+}
+
+body.light header,
+body.light .list {
+    background-color: #f0f0f0; /* Light header and list background */
+    border-color: #ccc; /* Light border */
+}
+
+/* Dark theme styles */
+body.dark {
+    background-color: #2e2e2e; /* Dark background */
+    color: #ffffff; /* Light text */
+}
+
+body.dark header,
+body.dark .list {
+    background-color: #3c3c3c; /* Dark header and list background */
+    border-color: #444; /* Dark border */
+}
+
+/* Button styles for both themes */
+button {
+    background-color: transparent;
+    border: 1px solid currentColor; /* Color adapts to theme */
+    color: inherit; /* Inherit text color */
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Button hover effect */
+button:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Light hover for dark theme */
+}
