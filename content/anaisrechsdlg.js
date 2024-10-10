@@ -1,5 +1,3 @@
-ChromeUtils.import("resource://gre/modules/Services.jsm");
-
 /*
 *	initialisation de la boîte de recherche avec annulation de l'operation (anaisrechsdlg.xul)
 *
@@ -11,6 +9,17 @@ ChromeUtils.import("resource://gre/modules/Services.jsm");
 *	implementation : lance la recherche en arrière plan
 *
 */
+// Ajout de gestion du bouton enter
+document.addEventListener('DOMContentLoaded', function() {
+    searchInput.addEventListener('keypress', function(event) {
+        // Check if the Enter key (key code 13) is pressed
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent default form submission if inside a form
+            btRechercheSimple(); // Call the search function
+        }
+    });
+});
+
 function initRechsDlg(){
 
   if (!window.arguments[0] ||
@@ -24,7 +33,8 @@ function initRechsDlg(){
   }
 
   //url du serveur
-  gUrlScript=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
+  //gUrlScript=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
+  gUrlScript = localStorage.getItem("anais.anaismoz.urlserveur");
 
   //en cas de fermeture avec case X
   window.arguments[0].res=false;

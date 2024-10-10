@@ -1,93 +1,27 @@
-/* Tree style */
-.tree {
-    font: inherit;
-    font-size: 14px;
-    --spacing: 1.5rem;
-    --radius: 10px;
-    padding: 1px;
-  }
+ .list {
+    overflow-y: scroll;
+    height: 80vh;
+ }
 
-  .tree li {
-    display: block;
-    position: relative;
-    padding-left: calc(2 * var(--spacing) - var(--radius) - 1px);
-  }
-
-  .tree ul {
-    margin-left: calc(var(--radius) - var(--spacing));
-    padding-left: 0;
-  }
-
-  .tree ul li {
-    border-left: 1px solid #808080;
-  }
-
-  .tree ul li:last-child {
-    border-color: transparent;
-  }
-
-  .tree ul li::before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: calc(var(--spacing) / -2);
-    left: -1px;
-    width: calc(var(--spacing) + 1px);
-    height: calc(var(--spacing) + 1px);
-    border: solid #808080;
-    border-width: 0 0 1px 1px;
-  }
-
-  .tree summary {
-    display: block;
+ /* Basic styles for the list */
+ #interactive-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 300px;
+    border: 1px solid #ccc;
+}
+#interactive-list li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
     cursor: pointer;
-  }
-
-  .tree summary::marker,
-  .tree summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .tree summary:focus {
-    outline: none;
-  }
-
-  .tree summary:focus-visible {
-    outline: 1px dotted #000;
-  }
-
-  .tree li::after,
-  .tree li::after,
-.tree summary::before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: calc(var(--spacing) / 2 - var(--radius));
-    left: calc(var(--spacing) - var(--radius) - 1px);
-    width: calc(2 * var(--radius));
-    height: calc(2 * var(--radius));
-    border-radius: 50%;
-    background: transparent;
 }
-
-/* Adjust the size and centering of the icon */
-.tree summary::before {
-    z-index: 1;
-    background: transparent url('images/folder48_light.png') center center; /* Center the icon */
-    background-size: 20px 20px; /* Resize the icon */
+#interactive-list li:hover {
+    background-color: #f0f0f0;
 }
-/* Dark theme support */
-@media (prefers-color-scheme: dark) {
-    .tree summary::before {
-        background: transparent url('images/folder48_dark.png') center center;
-        background-size: 20px 20px;
-    }
-}
-
-/* When the details are open */
-.tree details[open] > summary::before {
-    background-position: center; /* Adjust position to center */
-    background-size: 20px 20px; /* Ensure the icon size is consistent */
+/* Highlight selected item */
+.selected {
+    background-color: #cce5ff;
 }
 
 /* Base styles */
@@ -107,11 +41,24 @@ header {
 }
 
 /* Search bar */
-.search-bar {
-    margin-right: 20px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+@media (prefers-color-scheme: light) {
+    .search-bar {
+        font: inherit;
+        margin-right: 20px;
+        padding: 5px;
+        border-radius: 5px;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    .search-bar {
+        font: inherit;
+        color:#A1A1AA;
+        margin-right: 20px;
+        padding: 5px;
+        border: 1px solid #A1A1AA;
+        border-radius: 5px;
+        background-color: #18181B;
+    }
 }
 
 /* Button styles */
@@ -123,8 +70,8 @@ header {
 
 /* Splitter line */
 .splitter {
-    width: 2px; /* Adjust thickness of the line */
-    background-color: #ccc; /* Color of the splitter */
+    width: 1px; /* Adjust thickness of the line */
+    background-color: #A1A1AA; /* Color of the splitter */
     height: 30px; /* Height of the splitter */
     margin: 0 10px; /* Space around the splitter */
 }
@@ -185,9 +132,9 @@ button {
     padding-left: 30px; /* Space for the icon */
 }
 
-/* Button hover effect */
-button:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Light hover for dark theme */
+.btn-search {
+    background-position: center;
+    padding-left: 24px;
 }
 
 /* Light theme button images */
@@ -196,6 +143,9 @@ button:hover {
         border-color: #71717A;
         background-color: #f5f5f5; /* Light background */
         color: #333;               /* Dark text */
+    }
+    button:hover {
+        background-color: #71717A;
     }
 
     .btn-search {
@@ -221,9 +171,12 @@ button:hover {
 /* Dark theme button images */
 @media (prefers-color-scheme: dark) {
     button {
-        border-color: #71717A;
-        background-color: #52525B; /* Dark background */
+        border-color: #8F8F9D;
+        background-color: #2B2A33; /* Dark background */
         color: #FFF;         /* Light text */
+    }
+    button:hover {
+        background-color: #52525E;
     }
 
     .btn-search {

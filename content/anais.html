@@ -5,34 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contacts ministériels</title>
     <link rel="icon" href="../skin/images/anais_icon_16.png" type="image/x-icon">
+    <script src="anaishelpers.js" defer></script>
     <script src="anaistheme.js" defer></script>
     <script src="anaismozdlg.js" defer></script>
     <script src="anaismozarbre.js" defer></script>
+    <script src="anaistreelist.js" defer></script>
+    <script src="anaisrechsdlg.js" defer></script>
+    <script src="anaisbtnlisteners.js" defer></script>
     <link rel="stylesheet" href="../skin/anais.css">
 </head>
 <body>
 
     <header>
-        <input type="text" class="search-bar" placeholder="Recherche rapide...">
+        <input type="text" id="anais-rechtxt" class="search-bar" placeholder="Rechercher...">
         <div class="buttons">
-            <button class="btn-search">
-                Rechercher
+            <button id="anais-rechbt" class="btn-search">
+               &nbsp;
             </button>
             <div class="splitter"></div>
-            <button class="btn-properties">
+            <button id="anaismoz-btprop" class="btn-properties">
                 Propriétés
             </button>
-            <button class="btn-message">
+            <button id="anaismoz-btcompose" class="btn-message">
                 Message
             </button>
             <div class="splitter"></div>
-            <button class="btn-directory">
+            <button id="anaismoz-btpauline" class="btn-directory">
                 Annuaire Web
             </button>
-            <button class="btn-legend">
+            <button id="anaismoz-btlegende" class="btn-legend">
                 Légende
             </button>
-            <button class="btn-about">
+            <button id="anaismoz-btabout" class="btn-about">
                 À propos
             </button>
         </div>
@@ -40,36 +44,46 @@
 
     <div class="content">
         <div class="list">
-            <h2>Left List</h2>
-            <ul class="tree">
-                <li>
-                  <details open>
-                    <summary>Giant planets</summary>
-                    <ul>
-                      <li>
-                        <details>
-                          <summary>Gas giants</summary>
-                          <ul>
-                            <li>Jupiter</li>
-                            <li>Saturn</li>
-                          </ul>
-                        </details>
-                      </li>
-                      <li>
-                        <details>
-                          <summary>Ice giants</summary>
-                          <ul>
-                            <li>Uranus</li>
-                            <li>Neptune</li>
-                          </ul>
-                        </details>
-                      </li>
-                    </ul>
-                  </details>
-                </li>
-              </ul>
+            <h1>Interactive List</h1>
+            <ul id="anaismoz-arbre">
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+                <li>Item 4</li>
+                <li>Item 5</li>
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+                <li>Item 4</li>
+                <li>Item 5</li>
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+                <li>Item 4</li>
+                <li>Item 5</li>
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+                <li>Item 4</li>
+                <li>Item 5</li>
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+                <li>Item 4</li>
+                <li>Item 5</li>
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+                <li>Item 4</li>
+                <li>Item 5</li>
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+                <li>Item 4</li>
+                <li>Item 5</li>
+            </ul>
         </div>
-
+        <div id="context-menu"></div>
         <div class="list">
             <h2>Right List</h2>
             <ul class="tree">

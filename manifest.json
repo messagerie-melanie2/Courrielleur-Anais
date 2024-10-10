@@ -10,10 +10,11 @@
     }
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["background.js", "anaishelpers.js"]
   },
   "permissions": [
-    "tabs"
+    "tabs",
+    "notifications"
   ],
   "icons": {
     "32": "skin/images/anais_icon_32.png"

@@ -1,5 +1,3 @@
-ChromeUtils.import("resource://gre/modules/Services.jsm");
-
 /**
 *	initialisation de la boite d'affichage des proprietes de boite aux lettres
 *

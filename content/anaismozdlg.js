@@ -1,6 +1,4 @@
-ChromeUtils.import("resource:///modules/mailServices.js");
-ChromeUtils.import("resource://gre/modules/Services.jsm");
-
+initAnaisDlg();
 
 /**
 * Memorisation du chemin courant
@@ -57,30 +55,35 @@ function initAnaisDlg(){
   gCodeErreur=0;
   gMsgErreur="";
 
-  if (Services.io.offline){
+  if (!navigator.onLine){
+    showNotification("Mode hors connexion", "Les contacts ministériels ne sont pas disponibles hors connexion.");
     anaisBtFermer();
     return false;
-  }  
+  }
 
-  //initialisation url du serveur à partir de la preference 'anais.anaismoz.urlserveur' 
+  //initialisation url du serveur à partir de la preference 'anais.anaismoz.urlserveur'
   //url du serveur
-  gUrlScript=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
-  
+  //gUrlScript=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
+  gUrlScript = localStorage.getItem("anais.anaismoz.urlserveur");
+
   //chemin courant
-  if (Services.prefs.prefHasUserValue("anais.anaismoz.chemincourant")){
+  let gCheminCourant = localStorage.getItem("anais.anaismoz.chemincourant");
+  /*if (Services.prefs.prefHasUserValue("anais.anaismoz.chemincourant")){
     let val=Services.prefs.getCharPref("anais.anaismoz.chemincourant");
     if (val!=""){
       gCheminCourant=val;
     }
-  }
+  }*/
 
   //v0.51 conteneur selectionne au lancement
-  if (Services.prefs.prefHasUserValue("anais.anaismoz.demarrage")){
+  /*if (Services.prefs.prefHasUserValue("anais.anaismoz.demarrage")){
     let val=Services.prefs.getCharPref("anais.anaismoz.demarrage");
     if (val!=""){
       g_SelectionDem=val;
     }
-  }
+  }*/
+  let g_SelectionDem = localStorage.getItem("anais.anaismoz.demarrage");
+
   AnaisTrace("initAnaisDlg g_SelectionDem:"+g_SelectionDem);
 
   //mode de fenetre
@@ -96,7 +99,7 @@ function initAnaisDlg(){
   //identifiant de session php (21/03/2006 peut avoir ete cree avant)
   let param=null;
   let sessionId=LitSessionPhp();
-  
+
   if (""==sessionId){
     //V0.11 - determiner nom d'utilisateur -> entête 'anaismoz-uid'
     let uid=anaisConfigNomUtilisateur();
@@ -108,15 +111,15 @@ function initAnaisDlg(){
     //02-06-2004 chemin courant au demarrage
     param=uid+"&appver="+appver;//09/11/2004
   }
-  
+
   //interrogation du serveur (demarrage -> sans paramètres)
   anaisSetWaitCursor();
   //requête asynchrone
   let chemin=gCheminCourant;
-  if (""!=g_SelectionDem) 
+  if (""!=g_SelectionDem)
     chemin=g_SelectionDem;
   AnaisTrace("initAnaisDlg chemin:"+chemin);
-  
+
   let res=anaisReqSrvFnc("",chemin,param,initAnaisDlgRap, null);
   if (false==res){
     AnaisAfficheMsgId("anaisdlg_ErrInit");
@@ -128,7 +131,7 @@ function initAnaisDlg(){
   ChargeSourceAnais(initAnaisDlgSourceRap);
 
   gAnaisInitOk=true;
-  
+
   return true;
 }
 
@@ -175,7 +178,7 @@ function initAnaisDlgRap(doc, elem){
     document.getElementById("anaismozdlg-btfermer").click();
     return;
   }
-  
+
   //tester resultat de la requête
   let bDocOk=anaisAnalyseErreurDoc(doc);
   if (!bDocOk){
@@ -186,17 +189,17 @@ function initAnaisDlgRap(doc, elem){
   }
   let resultat=doc.getElementsByTagNameNS(ANAIS_NS, "anaismoz");
   resultat=resultat[0];
-  
+
   //V0.11 racine des images
   gRacineImages=resultat.getAttribute("images");
-  
+
   //utiliser l'attribut 'chemin' de l'element <anaismoz> du document pour le chemin courant
   gCheminCourant=resultat.getAttribute("chemin");
-  if (g_SelectionDem!=gCheminCourant) 
+  if (g_SelectionDem!=gCheminCourant)
     g_SelectionDem="";
 
   AnaisTrace("initAnaisDlgRap gCheminCourant:"+gCheminCourant);
-  
+
   //traiter arborescence
   let res=anaisInitArbre(doc);
   if (res==false){
@@ -211,13 +214,13 @@ function initAnaisDlgRap(doc, elem){
     AnaisAfficheMsgIdGlobalErr("anaisdlg_ErrInitBoites");
     return;
   }
-  
+
   //initialisation liste des destinataires
-  if (ANAIS_MODE_COMPO==g_bMode) 
+  if (ANAIS_MODE_COMPO==g_bMode)
     anaisInitDestCompose();
-  else if (ANAIS_MODE_PARTS==g_bMode) 
+  else if (ANAIS_MODE_PARTS==g_bMode)
     anaisInitDestParts();
-  
+
   //selectionner conteneur existant (a faire après anaisInitBoites)
   anaisArbreSelChemin(gCheminCourant);
 
@@ -226,7 +229,7 @@ function initAnaisDlgRap(doc, elem){
 
   btRech=document.getElementById("anais-rechbt");
   anaisRestoreCursor();
-  
+
   //liste des caractères autorises pour la saisie de la recherche
   let racine_rech=anaisRacineRech();
   let saisie="";
@@ -243,7 +246,7 @@ function initAnaisDlgRap(doc, elem){
       gMaxElemCache=limite;
     }
   }
-  
+
   //arborescence des recherches
   anaisArbreInitRechs();
 
@@ -292,11 +295,12 @@ function quitteAnaisDlg(){
     return;
   }
   //sauvegarde le chemin courant
-  Services.prefs.setCharPref("anais.anaismoz.chemincourant",gCheminCourant);
+  //Services.prefs.setCharPref("anais.anaismoz.chemincourant",gCheminCourant);
+  localStorage.setItem("anais.anaismoz.chemincourant",gCheminCourant);
   //v0.51 conteneur selectionne au lancement
-  Services.prefs.setCharPref("anais.anaismoz.demarrage",g_SelectionDem);
-
-  Services.prefs.savePrefFile(null);
+  //Services.prefs.setCharPref("anais.anaismoz.demarrage",g_SelectionDem);
+  localStorage.setItem("anais.anaismoz.demarrage",g_SelectionDem);
+  //Services.prefs.savePrefFile(null);
 
   //sauvegarde du cache des recherches
   //v2.5 si mode autonome (bug mantis 915)
@@ -349,7 +353,7 @@ function initModeUI(mode){
 }
 
 function anaisBtFermer(){
-  
+
   let tabbedBrowser=window.parent.document.getElementById("tabmail");
 
   if (null!=tabbedBrowser) {
@@ -372,7 +376,7 @@ function btRechercheSimple(){
     AnaisAfficheMsgId("anais_RechCritMin");
     return;
   }
-  
+
   //ajouter la valeur dans la liste
   let menus=liste.getElementsByTagName("menuitem");
   let nb=menus.length;
@@ -504,7 +508,7 @@ function anaisNotifieRechModif(ancienId,nouveauId,libelle){
 *
 */
 function anaisNotifieRechSup(rechid){
-  
+
   let elem=document.getElementById(rechid);
   if (elem){
     let elemsel=anaisArbreItemSel();
@@ -521,7 +525,7 @@ function anaisNotifieRechSup(rechid){
 *
 */
 function anaisNotifieRechSupTout(){
-  
+
   //recherche racine des recherches
   let racine_rech=anaisRacineRech();
   if (null==racine_rech){
@@ -566,7 +570,7 @@ function anaisBoitesEntite(event){
   let elem=gBoitesView.getBoite(index);
   let chemin=elem.getAttribute("id");
   anaisSetWaitCursor();
-  
+
   // Logs tests #5741: Modifier le comportement du clic droit/Atteindre l'entité
   let attributes = elem.attributes;
   for (let i = 0; i < attributes.length; i++) {
@@ -692,10 +696,10 @@ function chercherConteneur(chemin)
       parent=elem.parentNode;
     }
     anaisRestoreCursor();
-    
+
     //selection
     anaisArbreSelChemin(cheminpar);
-    
+
     //selection de la boîte dans la liste
     window.setTimeout(anaisSelectionBoite,1000,chemin);
     return 1;
@@ -738,16 +742,16 @@ function anaisBoitesEntiteRap(doc, elem){
   }
 
   anaisArbreEffSel();
-  
+
   //remise à zero de la selection
   anaisBoitesEffSel();
-  
+
   //vider le contenu de la liste
   anaisBoitesVideContenu();
 
   //inserer le contenu arborescence
   anaisUpdateArbo(doc);
-  
+
   //boites
   AnaisTrace("anaisBoitesEntite anaisBoitesInsereContenu");
   let res=anaisBoitesInsereContenu(doc);
@@ -756,10 +760,10 @@ function anaisBoitesEntiteRap(doc, elem){
     AnaisAfficheMsgIdGlobalErr("anaisdlg_ErrBoites");
     return;
   }
-  
+
   //V0.11 tri des boites
   anaisBoitesInitTri();
-  
+
   //V0.11 affichage du nombre de boites
   anaisMajNbBoites();
 
@@ -771,10 +775,10 @@ function anaisBoitesEntiteRap(doc, elem){
     AnaisAfficheMsgIdGlobalErr("anaisdlg_ErrArbre");
     return;
   }
-  
+
   //evite double construction liste des boîtes
   gCheminBoites=chemin;
-  
+
   //conteneur courant
   anaisArbreSelChemin(chemin);
 
@@ -797,28 +801,29 @@ function anaisDlgComposeMsg(){
   let msgComposFormat=Components.interfaces.nsIMsgCompFormat;
   let params=Components.classes["@mozilla.org/messengercompose/composeparams;1"].createInstance(Components.interfaces.nsIMsgComposeParams);
   if (params){
-    
+
     params.type=msgComposeType.New;
     params.format=msgComposFormat.Default;
     let composeFields=Components.classes["@mozilla.org/messengercompose/composefields;1"].createInstance(Components.interfaces.nsIMsgCompFields);
-    
+
     if (composeFields){
-      
+
       composeFields.to="";
       //liste des boites
       let nb=gBoites.view.rowCount;
       for (var i=0;i<nb;i++){
         if (gBoites.view.selection.isSelected(i)){
-          
+
           let elem=gBoitesView.getBoite(i);
-          
+
           //retrouver les colonnes avec id boites-cn boites-mail
           let cells=elem.getElementsByTagName("treecell");
           let cn=cells[gIndexcn].getAttribute("label");
           let mail=cells[gIndexmail].getAttribute("label");
-          if (""!=composeFields.to) 
+          if (""!=composeFields.to)
             composeFields.to+=",";
-          composeFields.to+=MailServices.headerParser.makeMimeAddress(cn, mail);
+          //composeFields.to+=MailServices.headerParser.makeMimeAddress(cn, mail);
+          composeFields.to += makeMimeAddress(cn, mail);
         }
       }
 
@@ -888,7 +893,7 @@ function anaisDlgPauline(treeid){
   }
   let dnelem=elem.getAttribute("id");
   AnaisTrace("anaisDlgPauline dnelem="+dnelem);
-  
+
   //cas chemin ldap absent -> recherche
   if ((null==dnelem)||(""==dnelem)){
     let cells=elem.getElementsByTagName("treecell");
@@ -906,7 +911,7 @@ function anaisDlgPauline(treeid){
     }
     return;
   }
-  
+
   //affichage des proprietes
   anaisDlgPaulineRap(dnelem);
 
@@ -923,11 +928,11 @@ function anaisDlgPaulineRap(dnelem){
   let tab=dnelem.split("/");
   let dn=tab[3];
   AnaisTrace("anaisDlgPaulineRap gpauline_racinedn="+gpauline_racinedn);
-  
+
   let pos=0;
-  if (""!=gpauline_racinedn) 
+  if (""!=gpauline_racinedn)
     pos=dn.indexOf(gpauline_racinedn);
-  
+
   AnaisTrace("anaisDlgPaulineRap pos="+pos);
   if (-1!=pos){
     if (0<pos) dn=dn.substring(0,pos-1);
