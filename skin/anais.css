@@ -1,5 +1,7 @@
 /* Tree style */
 .tree {
+    font: inherit;
+    font-size: 14px;
     --spacing: 1.5rem;
     --radius: 10px;
     padding: 1px;
@@ -8,7 +10,7 @@
   .tree li {
     display: block;
     position: relative;
-    padding-left: calc(2 * var(--spacing) - var(--radius) - 2px);
+    padding-left: calc(2 * var(--spacing) - var(--radius) - 1px);
   }
 
   .tree ul {
@@ -17,7 +19,7 @@
   }
 
   .tree ul li {
-    border-left: 2px solid #ddd;
+    border-left: 1px solid #808080;
   }
 
   .tree ul li:last-child {
@@ -29,11 +31,11 @@
     display: block;
     position: absolute;
     top: calc(var(--spacing) / -2);
-    left: -2px;
-    width: calc(var(--spacing) + 2px);
+    left: -1px;
+    width: calc(var(--spacing) + 1px);
     height: calc(var(--spacing) + 1px);
-    border: solid #ddd;
-    border-width: 0 0 2px 2px;
+    border: solid #808080;
+    border-width: 0 0 1px 1px;
   }
 
   .tree summary {
@@ -55,7 +57,8 @@
   }
 
   .tree li::after,
-  .tree summary::before {
+  .tree li::after,
+.tree summary::before {
     content: '';
     display: block;
     position: absolute;
@@ -64,17 +67,28 @@
     width: calc(2 * var(--radius));
     height: calc(2 * var(--radius));
     border-radius: 50%;
-    background: #ddd;
-  }
+    background: transparent;
+}
 
-  .tree summary::before {
+/* Adjust the size and centering of the icon */
+.tree summary::before {
     z-index: 1;
-    background: #696 url('expand-collapse.svg') 0 0;
-  }
+    background: transparent url('images/folder48_light.png') center center; /* Center the icon */
+    background-size: 20px 20px; /* Resize the icon */
+}
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+    .tree summary::before {
+        background: transparent url('images/folder48_dark.png') center center;
+        background-size: 20px 20px;
+    }
+}
 
-  .tree details[open] > summary::before {
-    background-position: calc(-2 * var(--radius)) 0;
-  }
+/* When the details are open */
+.tree details[open] > summary::before {
+    background-position: center; /* Adjust position to center */
+    background-size: 20px 20px; /* Ensure the icon size is consistent */
+}
 
 /* Base styles */
 body {
