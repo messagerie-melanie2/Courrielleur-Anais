@@ -6,6 +6,8 @@
     <title>Contacts ministériels</title>
     <link rel="icon" href="../skin/images/anais_icon_16.png" type="image/x-icon">
     <script src="anaistheme.js" defer></script>
+    <script src="anaismozdlg.js" defer></script>
+    <script src="anaismozarbre.js" defer></script>
     <link rel="stylesheet" href="../skin/anais.css">
 </head>
 <body>
@@ -13,30 +15,24 @@
     <header>
         <input type="text" class="search-bar" placeholder="Recherche rapide...">
         <div class="buttons">
-            <button>
-                <img src="../skin/images/btrech.gif" alt="Legend" class="button-icon">
+            <button class="btn-search">
                 Rechercher
             </button>
             <div class="splitter"></div>
-            <button>
-                <img src="../skin/images/btrech.gif" alt="Legend" class="button-icon">
+            <button class="btn-properties">
                 Propriétés
             </button>
-            <button>
-                <img src="../skin/images/btrech.gif" alt="Legend" class="button-icon">
+            <button class="btn-message">
                 Message
             </button>
             <div class="splitter"></div>
-            <button>
-                <img src="../skin/images/btrech.gif" alt="Legend" class="button-icon">
+            <button class="btn-directory">
                 Annuaire Web
             </button>
-            <button>
-                <img src="../skin/images/btrech.gif" alt="Legend" class="button-icon">
+            <button class="btn-legend">
                 Légende
             </button>
-            <button>
-                <img src="../skin/images/btrech.gif" alt="Legend" class="button-icon">
+            <button class="btn-about">
                 À propos
             </button>
         </div>
@@ -45,24 +41,64 @@
     <div class="content">
         <div class="list">
             <h2>Left List</h2>
-            <ul>
-                <li>Item 1</li>
-                <li>Item 2</li>
-                <li>Item 3</li>
-                <li>Item 4</li>
-                <li>Item 5</li>
-            </ul>
+            <ul class="tree">
+                <li>
+                  <details open>
+                    <summary>Giant planets</summary>
+                    <ul>
+                      <li>
+                        <details>
+                          <summary>Gas giants</summary>
+                          <ul>
+                            <li>Jupiter</li>
+                            <li>Saturn</li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details>
+                          <summary>Ice giants</summary>
+                          <ul>
+                            <li>Uranus</li>
+                            <li>Neptune</li>
+                          </ul>
+                        </details>
+                      </li>
+                    </ul>
+                  </details>
+                </li>
+              </ul>
         </div>
 
         <div class="list">
             <h2>Right List</h2>
-            <ul>
-                <li>Item A</li>
-                <li>Item B</li>
-                <li>Item C</li>
-                <li>Item D</li>
-                <li>Item E</li>
-            </ul>
+            <ul class="tree">
+                <li>
+                  <details open>
+                    <summary>Giant planets</summary>
+                    <ul>
+                      <li>
+                        <details>
+                          <summary>Gas giants</summary>
+                          <ul>
+                            <li>Jupiter</li>
+                            <li>Saturn</li>
+                          </ul>
+                        </details>
+                      </li>
+                      <li>
+                        <details>
+                          <summary>Ice giants</summary>
+                          <ul>
+                            <li>Uranus</li>
+                            <li>Neptune</li>
+                          </ul>
+                        </details>
+                      </li>
+                    </ul>
+                  </details>
+                </li>
+              </ul>
         </div>
     </div>
 

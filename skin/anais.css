@@ -1,3 +1,81 @@
+/* Tree style */
+.tree {
+    --spacing: 1.5rem;
+    --radius: 10px;
+    padding: 1px;
+  }
+
+  .tree li {
+    display: block;
+    position: relative;
+    padding-left: calc(2 * var(--spacing) - var(--radius) - 2px);
+  }
+
+  .tree ul {
+    margin-left: calc(var(--radius) - var(--spacing));
+    padding-left: 0;
+  }
+
+  .tree ul li {
+    border-left: 2px solid #ddd;
+  }
+
+  .tree ul li:last-child {
+    border-color: transparent;
+  }
+
+  .tree ul li::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: calc(var(--spacing) / -2);
+    left: -2px;
+    width: calc(var(--spacing) + 2px);
+    height: calc(var(--spacing) + 1px);
+    border: solid #ddd;
+    border-width: 0 0 2px 2px;
+  }
+
+  .tree summary {
+    display: block;
+    cursor: pointer;
+  }
+
+  .tree summary::marker,
+  .tree summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .tree summary:focus {
+    outline: none;
+  }
+
+  .tree summary:focus-visible {
+    outline: 1px dotted #000;
+  }
+
+  .tree li::after,
+  .tree summary::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: calc(var(--spacing) / 2 - var(--radius));
+    left: calc(var(--spacing) - var(--radius) - 1px);
+    width: calc(2 * var(--radius));
+    height: calc(2 * var(--radius));
+    border-radius: 50%;
+    background: #ddd;
+  }
+
+  .tree summary::before {
+    z-index: 1;
+    background: #696 url('expand-collapse.svg') 0 0;
+  }
+
+  .tree details[open] > summary::before {
+    background-position: calc(-2 * var(--radius)) 0;
+  }
+
 /* Base styles */
 body {
     font-family: Arial, sans-serif;
@@ -20,14 +98,6 @@ header {
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
-}
-
-/* Add styles for the button icons */
-.button-icon {
-    width: 20px;  /* Adjust the width as needed */
-    height: 20px; /* Adjust the height as needed */
-    vertical-align: middle; /* Align image with text */
-    margin-right: 5px; /* Space between image and text */
 }
 
 /* Button styles */
@@ -53,7 +123,7 @@ header {
 
 /* List styles */
 .list {
-    width: 45%;
+    width: 48%;
     border: 1px solid #ccc;
     padding: 10px;
 }
@@ -76,23 +146,88 @@ body.dark {
     color: #ffffff; /* Light text */
 }
 
-body.dark header,
 body.dark .list {
     background-color: #3c3c3c; /* Dark header and list background */
     border-color: #444; /* Dark border */
 }
 
-/* Button styles for both themes */
+/* Default button styles */
 button {
-    background-color: transparent;
-    border: 1px solid currentColor; /* Color adapts to theme */
-    color: inherit; /* Inherit text color */
-    padding: 5px 10px;
-    border-radius: 5px;
+    font: inherit;
+    font-size: 14px;
+    border-radius: 4px;      /* Slightly rounded corners */
+    border: 1px solid transparent;
+    transition: background 0.3s ease;
+    display: flex;
+    align-items: center;
+    padding: 0.5em 1em;
+    /*border: none;*/
+    /*background: transparent;*/
+    color: white;
     cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: 5px center;
+    background-size: 20px 20px; /* Adjust icon size */
+    padding-left: 30px; /* Space for the icon */
 }
 
 /* Button hover effect */
 button:hover {
     background-color: rgba(255, 255, 255, 0.1); /* Light hover for dark theme */
+}
+
+/* Light theme button images */
+@media (prefers-color-scheme: light) {
+    button {
+        border-color: #71717A;
+        background-color: #f5f5f5; /* Light background */
+        color: #333;               /* Dark text */
+    }
+
+    .btn-search {
+        background-image: url('images/search48_light.png');
+    }
+    .btn-properties {
+        background-image: url('images/open48_light.png');
+    }
+    .btn-message {
+        background-image: url('images/message48_light.png');
+    }
+    .btn-directory {
+        background-image: url('images/web48_light.png');
+    }
+    .btn-legend {
+        background-image: url('images/info48_light.png');
+    }
+    .btn-about {
+        background-image: url('images/question48_light.png');
+    }
+}
+
+/* Dark theme button images */
+@media (prefers-color-scheme: dark) {
+    button {
+        border-color: #71717A;
+        background-color: #52525B; /* Dark background */
+        color: #FFF;         /* Light text */
+    }
+
+    .btn-search {
+        background-image: url('images/search48_dark.png');
+    }
+    .btn-properties {
+        background-image: url('images/open48_dark.png');
+    }
+    .btn-message {
+        background-image: url('images/message48_dark.png');
+    }
+    .btn-directory {
+        background-image: url('images/web48_dark.png');
+    }
+    .btn-legend {
+        background-image: url('images/info48_dark.png');
+    }
+    .btn-about {
+        background-image: url('images/question48_dark.png');
+    }
 }
