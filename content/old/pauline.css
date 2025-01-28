@@ -1,3 +1,26 @@
+#anais-suggestions {
+    position: absolute;
+    width: 200px;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: rgb(19, 18, 18);
+    border: 1px solid #353131;
+    display: none;
+    z-index: 100;
+    top:50px;
+}
+
+#anais-suggestions div {
+    padding: 5px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+#anais-suggestions div:hover {
+    background-color: #4d4949;
+}
+
+
  .list {
     overflow-y: scroll;
     height: 80vh;

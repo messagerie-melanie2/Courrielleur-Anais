@@ -1,5 +1,23 @@
 initAnaisDlg();
 
+let cachedSearchHistory = [];
+
+// Load search history asynchronously and cache it
+async function loadSearchHistory() {
+    const storage = await browser.storage.local.get("searchHistory");
+    cachedSearchHistory = storage.searchHistory || [];
+}
+
+// Save a search term both in cache and asynchronously in storage
+function saveSearch(term) {
+  loadSearchHistory().then(result => {
+      if (!cachedSearchHistory.includes(term)) {
+        cachedSearchHistory.push(term);
+        browser.storage.local.set({ searchHistory: cachedSearchHistory });
+    }
+  });
+}
+
 /**
 * Memorisation du chemin courant
 *	preference "anais.anaismoz.chemincourant"
@@ -64,10 +82,16 @@ function initAnaisDlg(){
   //initialisation url du serveur à partir de la preference 'anais.anaismoz.urlserveur'
   //url du serveur
   //gUrlScript=Services.prefs.getCharPref("anais.anaismoz.urlserveur");
-  gUrlScript = localStorage.getItem("anais.anaismoz.urlserveur");
+  (async () => {
+    const gUrlScript = await getPreference("extensions.anais.serverUrl", []);
+  })();
+  console.log(gUrlScript);
 
   //chemin courant
-  let gCheminCourant = localStorage.getItem("anais.anaismoz.chemincourant");
+  (async () => {
+    const gCheminCourant = await getPreference("extensions.anais.currentPath", []);
+  })();
+  console.log(gCheminCourant);
   /*if (Services.prefs.prefHasUserValue("anais.anaismoz.chemincourant")){
     let val=Services.prefs.getCharPref("anais.anaismoz.chemincourant");
     if (val!=""){
@@ -82,7 +106,11 @@ function initAnaisDlg(){
       g_SelectionDem=val;
     }
   }*/
-  let g_SelectionDem = localStorage.getItem("anais.anaismoz.demarrage");
+  //let g_SelectionDem = localStorage.getItem("anais.anaismoz.demarrage");
+  (async () => {
+    const g_SelectionDem = await getPreference("extensions.anais.start", []);
+  })();
+  console.log(g_SelectionDem);
 
   AnaisTrace("initAnaisDlg g_SelectionDem:"+g_SelectionDem);
 
@@ -296,10 +324,12 @@ function quitteAnaisDlg(){
   }
   //sauvegarde le chemin courant
   //Services.prefs.setCharPref("anais.anaismoz.chemincourant",gCheminCourant);
-  localStorage.setItem("anais.anaismoz.chemincourant",gCheminCourant);
+  setPreference("extensions.anais.currentPath", gCheminCourant);
+  //localStorage.setItem("anais.anaismoz.chemincourant",gCheminCourant);
   //v0.51 conteneur selectionne au lancement
   //Services.prefs.setCharPref("anais.anaismoz.demarrage",g_SelectionDem);
-  localStorage.setItem("anais.anaismoz.demarrage",g_SelectionDem);
+  //localStorage.setItem("anais.anaismoz.demarrage",g_SelectionDem);
+  setPreference("extensions.anais.start", g_SelectionDem);
   //Services.prefs.savePrefFile(null);
 
   //sauvegarde du cache des recherches
@@ -363,7 +393,6 @@ function anaisBtFermer(){
   }
 }
 
-
 /**
 *	action sur le bouton rechercher de la barre d'outils
 *
@@ -377,21 +406,17 @@ function btRechercheSimple(){
     return;
   }
 
-  //ajouter la valeur dans la liste
-  let menus=liste.getElementsByTagName("menuitem");
-  let nb=menus.length;
-  let present=false;
-  for (var i=0;i<nb;i++){
-    if (menus[i].value==valeur){
-      present=true;
-      break;
-    }
-  }
-  if (!present){
-    liste.appendItem(valeur,valeur);
-  }
+  let suggestionsContainer = document.getElementById("suggestions");
+  let searchBox = document.getElementById("anais-rechtxt");
+
+  saveSearch(searchBox.value.trim()); // Save search on Enter
+  suggestionsContainer.style.display = "none"; // Hide suggestions
+
+  console.log("valeur: "+ valeur);
+  console.log("localStorage searchhistory:"+browser.storage.local.get("anais.searchhistory"));
+
   //executer la recherche
-  RechercheSimple(gSaisieRech.value);
+  RechercheSimple(valeur);
 }
 
 

@@ -105,7 +105,7 @@ function anaisInitArbre(doc){
 *
 */
 function anaisArbreClic(event){
-  
+
   gCodeErreur=0;
   gMsgErreur="";
 
@@ -163,7 +163,7 @@ function anaisArbreSelect(event){
   }
   let index=anaisArbreIndexItemSel()
   let lib=anaisGetLibArbreIndex(index);
-  if (lib!=false) 
+  if (lib!=false)
     anaisBandeauSetLib(lib);
 
   //liste des boites
@@ -407,7 +407,7 @@ function anaisArbreSelChemin(chemin){
   gArbre.treeBoxObject.ensureRowIsVisible(index);
 
   let lib=anaisGetLibArbreIndex(index);
-  if (lib!=false)	
+  if (lib!=false)
     anaisBandeauSetLib(lib);
 }
 
@@ -439,6 +439,8 @@ function anaisArbreEffSel(){
 */
 function anaisArbreInsereContenu(elem,doc){
 
+  console.log("elem: "+elem);
+  console.log("doc: "+doc);
   let arbo=doc.getElementsByTagNameNS(ANAIS_NS, 'arborescence');
   if (arbo==null || arbo[0]==null){
     gCodeErreur=-1;
@@ -651,7 +653,7 @@ function anaisArbreChoixDem(event){
   if (0==elem.id.indexOf("rech")){
     return;
   }
-  if (g_SelectionDem!=elem.id) 
+  if (g_SelectionDem!=elem.id)
     g_SelectionDem=elem.id;
   else g_SelectionDem="";
 }
@@ -784,7 +786,7 @@ function ArbrePositionneConteneurRap(doc, chemin){
 
   //inserer le contenu arborescence
   anaisUpdateArbo(doc);
-  
+
   //boites
   let res=anaisBoitesInsereContenu(doc);
   if (!res){
@@ -854,14 +856,14 @@ function anaisUpdateArbo(doc){
   if (null==arbo || null==arbo[0]){
     return false;
   }
-  
+
   let branches=arbo[0].getElementsByTagNameNS(ANAIS_NS, "branche");
   let nb=branches.length;
-  
+
   for (var b=0;b<nb;b++){
-    
+
     let branche=branches[b];
-    
+
     let dnconteneur=branche.getAttribute("conteneur");
     if (null==dnconteneur || ""==dnconteneur){
       continue;
@@ -880,19 +882,19 @@ function anaisUpdateArbo(doc){
       AnaisTrace("anaisUpdateArbo conteneur deja peuple");
       continue;
     }
-    
+
     let conteneur_childs=document.createElement("treechildren");
     conteneur.appendChild(conteneur_childs);
-    
+
     if (branche.hasChildNodes()){
-      
+
       let treechildren=branche.firstChild;
       if ("treechildren"!=treechildren.nodeName){
         // !
         AnaisTrace("anaisUpdateArbo treechildren!=treechildren.nodeName");
         continue;
       }
-      
+
       let nbchild=treechildren.childNodes.length;
       for (var c=0;c<nbchild;c++){
         let child=treechildren.childNodes[c];
@@ -900,9 +902,9 @@ function anaisUpdateArbo(doc){
         let item=anaisCreeElements(child);
         conteneur_childs.appendChild(item);
       }
-      
+
       conteneur.setAttribute("open",true);
-      
+
     }else{
       AnaisTrace("anaisUpdateArbo !branche.hasChildNodes");
     }

@@ -1,25 +1,31 @@
 {
   "manifest_version": 2,
-  "name": "Anaïs",
+  "name": "Pauline",
   "version": "1.0",
   "description": "Extension de consultation des contacts ministeriels",
   "applications": {
     "gecko": {
-      "id": "anais.developpement-durable@i-carre.com",
+      "id": "pauline@developpement-durable.fr",
       "strict_min_version": "102.0"
     }
   },
   "background": {
-    "scripts": ["background.js", "anaishelpers.js"]
+    "scripts": ["background.js"],
+    "persistent": true
   },
   "permissions": [
     "tabs",
-    "notifications"
+    "notifications",
+    "storage",
+    "menus",
+    "compose"
   ],
   "icons": {
     "32": "skin/images/anais_icon_32.png"
   },
   "web_accessible_resources": [
-    "content/anais.html"
+    "content/pauline.html",
+    "content/paulineHelpers.js",
+    "content/default/preferences/default_pref.json"
   ]
 }

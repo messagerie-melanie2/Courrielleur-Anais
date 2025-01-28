@@ -13,18 +13,19 @@
 function RechercheSimple(critere,base){
 
   //recherche racine des recherches
-  let racine_rech=anaisRacineRech();
+  /*let racine_rech=anaisRacineRech();
   if (null==racine_rech){
     AnaisAfficheMsgId("anaisdlg_ErrRechBase");
     return;
-  }
-  let racine=racine_rech.id;
+  }*/
+  //let racine=racine_rech.id;
+  let racine = "rech://amande/ou=organisation,dc=equipement,dc=gouv,dc=fr";
 
   //chemin de l'element de recherche
   let chemin="";
-  if ((null!=base)&&(base!="")) 
+  if ((null!=base)&&(base!=""))
     chemin=base.replace("ldap:","rechbs:");
-  else 
+  else
     chemin=racine.replace("rech:","rechbs:");
   chemin+="?"+critere;
 
@@ -38,19 +39,19 @@ function RechercheSimple(critere,base){
   }
 
   //limite du nombre de recherches
-  let limite=racine_rech.getAttribute("limite");
+  /*let limite=racine_rech.getAttribute("limite");
   let items=racine_rech.getElementsByTagName("treeitem");
-  if (items.length>=limite){
+  if (items.length >= limite){
     let msg=AnaisMessageFromId("anaisdlg_ErrRechLimite");
     msg=msg.replace("%limite",limite);
     anaisArbreSupRechDer();
-  }
+  }*/
 
   //requête serveur
   let chreq="";
-  if ((null!=base)&&(base!="")) 
+  if ((null!=base)&&(base!=""))
     chreq=base;
-  else 
+  else
     chreq=racine.replace("rech:","ldap:");
 
   let args=Array();
@@ -58,8 +59,10 @@ function RechercheSimple(critere,base){
   args["chemin"]=chreq;
   args["param"]=critere;
 
-  window.openDialog("chrome://anais/content/anaisrechsdlg.xul","",
-                    "chrome,modal,centerscreen,resizable=no",args);
+  anaisReqSrvFnc(args["op"], args["chemin"], args["param"], SearchReturn);
+
+  /*window.openDialog("chrome://anais/content/anaisrechsdlg.xul","",
+                    "chrome,modal,centerscreen,resizable=no",args);*/
 
   //AnaisTrace("RechercheSimple recherche terminee");
   if (false==args["res"]){
@@ -94,7 +97,7 @@ function RechercheSimple(critere,base){
   }
 
   anaisSetWaitCursor();
-  anaisArbreEffSel();
+  //anaisArbreEffSel();
 
   //arborescence
   //ajouter chemin dans l'arborescence
@@ -135,6 +138,12 @@ function RechercheSimple(critere,base){
   anaisCacheNotification(doc);
 
   anaisRestoreCursor();
+}
+
+function SearchReturn(doc, elem)
+{
+  console.log("doc: "+doc);
+  console.log("elem: "+elem);
 }
 
 
@@ -278,7 +287,7 @@ function anaisArbreSupRechTout(event){
 *
 */
 function anaisArbreUpdRech(){
-  
+
   let elemRech=anaisArbreItemSel();
   if (null==elemRech){
     AnaisAfficheMsgId("anaisdlg_ErrRechTypeElem");

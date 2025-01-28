@@ -32,9 +32,9 @@ function initDlgRechS(){
   liste.selectedIndex=window.arguments[0][1];
   //force annulation par defaut
   window.arguments[0][1]=-1;
-  if (window.arguments[0][2]) 
+  if (window.arguments[0][2])
     gSaisieRech.value=window.arguments[0][2];
-  if (gSaisieRech.value.length>=3) 
+  if (gSaisieRech.value.length>=3)
     btRech.disabled=false;
   //filtrage
   if (window.arguments[0]["filtrage"]){
@@ -103,3 +103,49 @@ function OnSaisieRech(event){
 
   return true;
 }
+
+
+// Get elements
+const searchBox = document.getElementById("anais-rechtxt");
+const suggestionsContainer = document.getElementById("suggestions");
+
+// Load saved searches from localStorage
+let searchHistory = JSON.parse(browser.storage.local.get("anais.searchhistory")) || [];
+
+// Display suggestions that match the current input
+function displaySuggestions(input)
+{
+  console.log("suggestions ??");
+    suggestionsContainer.innerHTML = ""; // Clear previous suggestions
+    suggestionsContainer.style.display = "none"; // Hide if no matches
+
+    const filteredSuggestions = searchHistory.filter(term => term.toLowerCase().includes(input.toLowerCase()));
+
+    if (filteredSuggestions.length > 0) {
+        filteredSuggestions.forEach(term => {
+            const suggestionItem = document.createElement("div");
+            suggestionItem.textContent = term;
+            suggestionItem.className = "suggestion-item";
+            suggestionItem.style.padding = "5px";
+            suggestionItem.style.cursor = "pointer";
+
+            // Click to select the suggestion
+            suggestionItem.onclick = () => {
+                searchBox.value = term;
+                suggestionsContainer.style.display = "none";
+            };
+
+            suggestionsContainer.appendChild(suggestionItem);
+        });
+        suggestionsContainer.style.display = "block";
+    }
+}
+
+// Event listeners
+searchBox.addEventListener("input", (e) => displaySuggestions(e.target.value));
+
+document.addEventListener("click", (e) => {
+    if (!suggestionsContainer.contains(e.target) && e.target !== searchBox) {
+        suggestionsContainer.style.display = "none"; // Close suggestions when clicking outside
+    }
+});

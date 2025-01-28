@@ -1,7 +1,3 @@
-
-ChromeUtils.import("resource://gre/modules/Services.jsm");
-ChromeUtils.import("resource://gre/modules/pacomeAuthUtils.jsm");
-
 //numero de version du module
 const VERSION_ANAIS="6.3";
 
@@ -11,7 +7,7 @@ const ANAIS_NS="http://anais.melanie2.i2/schema";
 
 
 //url du script serveur
-var gUrlScript="http://mceweb2.si.minint.fr/anais/anaism2.php";
+var gUrlScript="http://anais.s2.m2.e2.rie.gouv.fr/anaism2.php";
 
 
 /**
@@ -39,13 +35,15 @@ var gAnaisConsole=null;
 function AnaisTrace(msg){
 
   if (!gAnaisInitTrace){
-    let t=Services.prefs.getBoolPref("anais.anaismoz.trace");
+    let t = localStorage.getItem("anais.anaismoz.trace");
     if (t)
-      gAnaisConsole=Services.console;
-    gAnaisInitTrace=true;
+      console.log("[Anais]: "+msg);
+      //gAnaisConsole=Services.console;
+    //gAnaisInitTrace=true;
   }
-  if (gAnaisConsole)
-    gAnaisConsole.logStringMessage("[Anais] "+msg);
+  // if (gAnaisConsole)
+    //gAnaisConsole.logStringMessage("[Anais] "+msg);
+
 }
 
 
@@ -60,15 +58,54 @@ var gMsgErreur="";
 //liste des chaines anais.properties
 var g_messages_anais=null;
 
+async function initializePreferences() {
+  const defaultPreferences = {
+      serverUrl: "http://anais.s2.m2.e2.rie.gouv.fr/anaism2.php"
+  };
+
+  const storedPreferences = await browser.storage.local.get(Object.keys(defaultPreferences));
+
+  // Set preferences to default if not already stored
+  for (let [key, value] of Object.entries(defaultPreferences)) {
+      if (storedPreferences[key] === undefined) {
+          await browser.storage.local.set({ [key]: value });
+      }
+  }
+}
+initializePreferences();
+
+// Generic method to retrieve any preference from browser.storage.local with a default value
+async function getPreference(key, defaultValue = null) {
+  try {
+      const result = await browser.storage.local.get(key);
+      return result[key] !== undefined ? result[key] : defaultValue;
+  } catch (error) {
+      console.error(`Error retrieving preference for key "${key}":`, error);
+      return defaultValue; // Fallback to default value on error
+  }
+}
+// Generic method to save a preference in browser.storage.local
+async function setPreference(key, value) {
+  try {
+      await browser.storage.local.set({ [key]: value });
+      console.log(`Preference saved: ${key} =`, value);
+  } catch (error) {
+      console.error(`Error saving preference for key "${key}":`, error);
+  }
+}
+
+
 /**
 *	Retourne une chaîne de message à partir de son identifiant dans le fichie anais.properties
 */
 function AnaisMessageFromId(msgid){
-  
-  if (null==g_messages_anais)
+  // TODO get msg from msgId trace
+  console.log("[Anais]: "+msgid);
+  /*if (null==g_messages_anais)
     g_messages_anais=Services.strings.createBundle("chrome://anais/locale/anais.properties");
-  
-  return g_messages_anais.GetStringFromName(msgid);
+
+  return g_messages_anais.GetStringFromName(msgid);*/
+  return msgid;
 }
 
 
@@ -78,10 +115,11 @@ function AnaisMessageFromId(msgid){
 *	@param msgid identifiant du message
 */
 function AnaisAfficheMsgId(msgid){
-  
+
   let msg=AnaisMessageFromId(msgid);
-  
-  Services.prompt.alert(window, "", msg);
+
+  //Services.prompt.alert(window, "", msg);
+  window.alert(msg);
 }
 
 /**
@@ -91,11 +129,12 @@ function AnaisAfficheMsgId(msgid){
 *	@param msg2 message additionnel affiche sur nouvelle ligne (optionnel)
 */
 function AnaisAfficheMsgId2(msgid,msg2){
-  
+
   let msg=AnaisMessageFromId(msgid);
-  if (null!=msg2) 
+  if (null!=msg2)
     msg+="\n"+msg2;
-  Services.prompt.alert(window, "", msg);
+  window.alert(msg);
+  //Services.prompt.alert(window, "", msg);
 }
 
 /**
@@ -105,11 +144,12 @@ function AnaisAfficheMsgId2(msgid,msg2){
 *	@param msgid identifiant du message
 */
 function AnaisAfficheMsgIdGlobalErr(msgid){
-  
+
   let msg=AnaisMessageFromId(msgid);
   msg+="\nCode:"+gCodeErreur;
   msg+="\nMessage:"+gMsgErreur;
-  Services.prompt.alert(window, "", msg);
+  //Services.prompt.alert(window, "", msg);
+  window.alert(msg);
 }
 
 
@@ -128,19 +168,19 @@ function AnaisAfficheMsgIdGlobalErr(msgid){
 function anaisAnalyseErreurDoc(doc){
 
   let resultat=doc.getElementsByTagNameNS(ANAIS_NS, "anaismoz");
-  
+
   if (null==resultat||null==resultat[0]){
     gCodeErreur=-1;
     gMsgErreur=AnaisMessageFromId("anaisdlg_ErrInitSrvDoc");
     AnaisTrace("anaisAnalyseErreurDoc null==resultat||null==resultat[0]");
     return false;
   }
-  
+
   resultat=resultat[0];
-  
+
   gCodeErreur=resultat.getAttribute("errcode");
   gMsgErreur=resultat.getAttribute("errmsg");
-  
+
   if ((gCodeErreur==null)||(gCodeErreur!=0)){
     AnaisTrace("anaisAnalyseErreurDoc gCodeErreur="+gCodeErreur);
     return false;
@@ -227,13 +267,14 @@ function anaisReqSrvFnc(op, dn, param, fnc, elem){
 
   let httpRequest=new XMLHttpRequest();
 
-  anaisDlgLibStatut("Interrogation du serveur...");
-  anaisSetWaitCursor();
+  console.log("Interrogation du serveur...");
+  //anaisDlgLibStatut("Interrogation du serveur...");
+  //anaisSetWaitCursor();
 
   httpRequest.onreadystatechange=function(){
-    
+    console.log("onreadystatechange triggered, httpRequest.readyState: "+httpRequest.readyState);
     switch(httpRequest.readyState) {
-      
+
       case 4:
         let statut=0;
         try{
@@ -241,7 +282,7 @@ function anaisReqSrvFnc(op, dn, param, fnc, elem){
         }
         catch(ex1){
           gCodeErreur=-1;
-          gMsgErreur=AnaisMessageFromId("anaisdlg_ErrSrv");
+          gMsgErreur="anaisdlg_ErrSrv"+ex1;//AnaisMessageFromId("anaisdlg_ErrSrv");
           AnaisTrace("anaisReqSrvFnc exception httpRequest.status:"+ex1);
           anaisDlgLibStatut("");
           fnc(null, elem);
@@ -251,7 +292,7 @@ function anaisReqSrvFnc(op, dn, param, fnc, elem){
         anaisDlgLibStatut("");
         if(statut!=200) {
           gCodeErreur=statut;
-          gMsgErreur=AnaisMessageFromId("anaisdlg_ErrSrv");
+          gMsgErreur=gMsgErreur="anaisdlg_ErrSrv, statut: "+statut;
           AnaisTrace("anaisReqSrvFnc statut!=200 :"+statut);
           fnc(null, elem);
           httpRequest=null;
@@ -269,17 +310,19 @@ function anaisReqSrvFnc(op, dn, param, fnc, elem){
           //traitement du document de reponse
           let doc=httpRequest.responseXML;
           if (doc==null){
+            console.log("doc is null !");
             gCodeErreur=-1;
             gMsgErreur=AnaisMessageFromId("anaisdlg_ErrSrv");
             AnaisTrace("anaisReqSrvFnc doc==null:"+gMsgErreur);
             fnc(doc, elem);
             return;
           }
-          
+
           //v0.54 si code erreur -10 -> renouveler requête avec identifiant utilisateur
           let res=anaisAnalyseErreurDoc(doc);
-          
+
           if (!res && -10==gCodeErreur){
+            console.log("code erreur -10");
             gCodeErreur=0;
             gMsgErreur="";
             let uid=anaisConfigNomUtilisateur();
@@ -291,7 +334,7 @@ function anaisReqSrvFnc(op, dn, param, fnc, elem){
             anaisReqSrvFnc(op,dn,param,fnc, elem);
             return;
           }
-          
+
           //appeler la fonction de rappel
           fnc(doc, elem);
           httpRequest=null;
@@ -315,22 +358,22 @@ function anaisReqSrvFnc(op, dn, param, fnc, elem){
     if (postparam!="") postparam+="&";
     postparam+="anaismoz-uid="+param;
   }
-  
+
   //paramètres additionnels dans anaismoz-par
   if ((op!='')&&(param!=null)&&(""!=param)){
     if (postparam!="") postparam+="&";
     postparam+="anaismoz-par="+param;
   }
-  
+
   //identifiant de session php
   let sessionId=LitSessionPhp();
   if (sessionId!=""){
     if (postparam!="") postparam+="&";
     postparam+="sessionid="+sessionId;
   }
-  
+
   postparam+="&extver="+VERSION_ANAIS;
-  
+
   AnaisTrace("anaisReqSrvFnc postparam="+postparam);
 
   httpRequest.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
@@ -365,7 +408,7 @@ function anaisSetRacineImages(elems){
     }
     return true;
   }
-  
+
   //cas d'une liste de treeitem dans une racine treechildren
   let items=elems.getElementsByTagName("treeitem");
   let nb=items.length;
@@ -386,7 +429,7 @@ function anaisSetRacineImages(elems){
 *
 */
 function anaisSetWaitCursor(){
-  window.setCursor("wait");
+  //window.setCursor("wait");
 }
 
 /**
@@ -399,7 +442,7 @@ function anaisSetWaitCursor(){
 *
 */
 function anaisRestoreCursor(){
-  window.setCursor("auto");
+  //window.setCursor("auto");
 }
 
 /**
@@ -421,19 +464,19 @@ function anaisClicColonne(treeid,treecol){
   indexcol/=2;//pris en compte splitters
   let bUp=true;
   let sens=treecol.getAttribute("sortDirection");
-  if (sens=="descending") 
+  if (sens=="descending")
     bUp=false;
-  
+
   if (treeid=="anaismoz-boites"){
     anaisBoitesEffSel();
     anaisTriItemsBoites(indexcol,bUp);
-  } else 
+  } else
     anaisTriItemsDest(indexcol,bUp);
 
   //sens du tri -> inversion
-  if (bUp) 
+  if (bUp)
     treecol.setAttribute("sortDirection","descending");
-  else 
+  else
     treecol.setAttribute("sortDirection","ascending");
 
   return true;
@@ -465,7 +508,7 @@ function anaisBoiteLegende(){
 function anaisConfigNomUtilisateur(){
 
   let uid=PacomeAuthUtils.GetUidComptePrincipal();
-  
+
   if (null==uid){
     gCodeErreur=-1;
     gMsgErreur=AnaisMessageFromId("anaisdlg_ErrCompte");
@@ -498,22 +541,22 @@ function anaisDlgPropBal(treeid){
   //si dn inexistant -> messsage d'information puis sortie
   let elem=null;
   if (idarbre=="anaismoz-boites"){
-    
+
     let index=gBoites.view.selection.currentIndex;
-    if (-1==index) 
+    if (-1==index)
       return false;
     elem=gBoitesView.getBoite(index);
-    
+
   } else{
-    
+
     let arbre=document.getElementById(idarbre);
     index=arbre.view.selection.currentIndex;
     if (-1==index) return false;
     elem=arbre.contentView.getItemAtIndex(index);
   }
-  
+
   let dnelem=elem.getAttribute("id");
-  
+
   //retrouver la colonne avec id boites-cn
   //cas chemin ldap absent -> recherche
   //v2.4 dn null pour membres externes dans la liste des membres -> ignorer
@@ -521,7 +564,7 @@ function anaisDlgPropBal(treeid){
     AnaisTrace("anaisDlgPropBal double-clic sur membre externe - pas d'affichage de proprietes");
     return false;
   }
-  
+
   if (null==dnelem || ""==dnelem){
     let cells=elem.getElementsByTagName("treecell");
     let mail=cells[2].getAttribute("label");
@@ -538,7 +581,7 @@ function anaisDlgPropBal(treeid){
     }
     return true;
   }
-  
+
   //affichage des proprietes
   anaisDlgPropBalRap(dnelem);
 
@@ -582,10 +625,10 @@ function anaisIsCheminParent(chemin, parent){
 
   let cp1=chemin.split('/');
   let cp2=parent.split('/');
-  
+
   if (cp1[2]!=cp2[2])
     return false;
-  
+
   if (cp1[3].indexOf(cp2[3])!=-1)
     return true;
 
@@ -626,9 +669,9 @@ function anaisRechCheminLdap(mail,fnc){
         try{
 
           statut=httpRequest.status;
-          
+
         } catch(ex1){
-          
+
           gCodeErreur=-1;
           gMsgErreur=AnaisMessageFromId("anaisdlg_ErrSrv");
           AnaisTrace("anaisRechCheminLdap exception httpRequest.status:"+ex1);
@@ -636,28 +679,28 @@ function anaisRechCheminLdap(mail,fnc){
           fnc(null);
           return;
         }
-        
+
         anaisDlgLibStatut("");
-        
+
         if(statut!=200) {
-          
+
           gCodeErreur=statut;
           gMsgErreur=AnaisMessageFromId("anaisdlg_ErrSrv");
           AnaisTrace("anaisRechCheminLdap statut!=200 :"+gMsgErreur);
           fnc(null);
           return;
-          
+
         } else {
-          
+
           //identifiant de session php
           let sessionId=LitSessionPhp();
-          if (""==sessionId){          
+          if (""==sessionId){
             try{
               let hdr=httpRequest.getResponseHeader("Set-Cookie");
               MemoSessionPhp(hdr);
             }catch(ex1){AnaisTrace("anaisRechCheminLdap exception getResponseHeader"+ex1);}
           }
-          
+
           //traitement du document de reponse
           let doc=httpRequest.responseXML;
           if (doc==null){
@@ -665,7 +708,7 @@ function anaisRechCheminLdap(mail,fnc){
             fnc(null);
             return;
           }
-          
+
           //code de resultat
           let bDocOk=anaisAnalyseErreurDoc(doc);
           if (!bDocOk){
@@ -683,7 +726,7 @@ function anaisRechCheminLdap(mail,fnc){
             fnc(null);
             return;
           }
-          
+
           //rechercher première entree
           let boites=doc.getElementsByTagNameNS(ANAIS_NS, 'boites');
           if ((boites==null)||(boites[0]==null)){
@@ -709,7 +752,7 @@ function anaisRechCheminLdap(mail,fnc){
     }
     return;
   }
-  
+
   httpRequest.open("POST", gUrlScript, true, null, null);
 
   let postparam="anaismoz-op="+RECH_BOITE+"&anaismoz-par="+valeur+"&extver="+VERSION_ANAIS;
@@ -756,6 +799,16 @@ function conteneurParent(chemin){
   return parent;
 }
 
+// Get the main mail window, replacement for Services.wm.getMostRecentWindow("mail:3pane");
+async function getMail3PaneWindow() {
+  const windows = await browser.windows.getAll({ windowTypes: ["normal"] });
+  for (const win of windows) {
+      if (win.title.includes("Thunderbird") || win.title.includes("Mail")) {
+          return win;
+      }
+  }
+  return null;  // If no mail window is found
+}
 
 /**
 *	memorise l'identifiant de session php
@@ -763,8 +816,9 @@ function conteneurParent(chemin){
 *
 */
 function MemoSessionPhp(hdr){
-  
-  let mail3Pane=Services.wm.getMostRecentWindow("mail:3pane");
+
+  //let mail3Pane=Services.wm.getMostRecentWindow("mail:3pane");
+  //let mail3Pane = await getMail3PaneWindow();
   if (null==mail3Pane)
     return;
 
@@ -779,7 +833,7 @@ function MemoSessionPhp(hdr){
     }
   }
 
-  mail3Pane.anais_sessionid=sessionId;
+  //mail3Pane.anais_sessionid=sessionId;
 }
 
 /**
@@ -788,12 +842,12 @@ function MemoSessionPhp(hdr){
 *
 */
 function LitSessionPhp(){
-  
-  let mail3Pane=Services.wm.getMostRecentWindow("mail:3pane");
+
+  /*let mail3Pane=Services.wm.getMostRecentWindow("mail:3pane");
   if (null==mail3Pane)
     return "";
 
-  return mail3Pane.anais_sessionid;
+  return mail3Pane.anais_sessionid;*/
 }
 
 /**
@@ -832,7 +886,7 @@ function anaisCheminReqDoc(doc){
       chemin+="?"+param;
     }
   }
-  
+
   return chemin
 }
 
@@ -862,14 +916,14 @@ function anaisOuvreSite(url){
 function OuvreAnais(){
 
   //gestion du mode offline
-  if (Services.io.offline){
+  if (!navigator.onLine){
     AnaisAfficheMsgId("anaisdlg_ErrDeconnecte");
     return ;
   }
-  
+
   //rechercher fenêtre Anais dejà ouverte
   let windowManager=Components.classes['@mozilla.org/appshell/window-mediator;1'].getService(Components.interfaces.nsIWindowMediator);
-  
+
   //anaisModeChoixDest
   let fenanais=null;
   let liste=windowManager.getEnumerator("anaismoz-dlg");
@@ -892,14 +946,14 @@ function OuvreAnais(){
 // compare les noms des serveurs de 2 chemins
 // retourne true si identiques, sinon false
 function compareServeur(chemin1, chemin2){
-  
+
   let compos1=chemin1.split("/");
   let compos2=chemin2.split("/");
   if (compos1 && compos2 &&
       3<compos1.length &&
       3<compos2.length &&
       compos1[2]==compos2[2]){
-        
+
     return true;
   }
   return false;
