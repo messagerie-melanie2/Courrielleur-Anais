@@ -1,6 +1,6 @@
 <!-- messengercompose-overlay.xul -->
 <!ENTITY anaismoz.dest.lib "Annuaire">
-<!ENTITY anaismoz.dest.bulle "Ouvrir l'annuaire Amande">
+<!ENTITY anaismoz.dest.bulle "Ouvrir l'annuaire du Ministère">
 <!ENTITY anaismoz.dest.accesskey "D">
 <!ENTITY anaismoz.menuprop "Propri&#233;t&#233;s...">
 <!ENTITY anaismoz.menuprop.cle "P">
@@ -14,7 +14,7 @@
 <!ENTITY anaismoz.menuprop "Propri&#233;t&#233;s...">
 <!ENTITY anaismoz.menuprop.cle "P">
 <!ENTITY btanais.lib "Annuaire">
-<!ENTITY btanais.bulle "Ouvrir l'annuaire Amande">
+<!ENTITY btanais.bulle "Ouvrir l'annuaire du Ministère">
 <!ENTITY anais.menu.accesskey "n">
 
 <!-- anaisdlgpropbal.xul -->
@@ -99,7 +99,7 @@
 
 <!-- apropos.xul -->
 <!ENTITY anais.apropos.titre "&#192; propos d'Anais">
-<!ENTITY anais.apropos.lib1 "Interface de pr&#233;sentation de l'annuaire Amande">
+<!ENTITY anais.apropos.lib1 "Interface de pr&#233;sentation de l'annuaire du Ministère">
 <!ENTITY anais.apropos.lib2 "Version: &anais.numver;">
 <!ENTITY anais.apropos.lib3 "Publié le : &anais.datever;">
 
