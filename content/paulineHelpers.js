@@ -46,7 +46,7 @@ async function loadDefaultPreferences()
         else
         console.log("All preferences already set.");
 
-        document.addEventListener("DOMContentLoaded", async () => { const prefs = await browser.storage.local.get(); }
+        document.addEventListener("DOMContentLoaded", async () => { const prefs = await browser.storage.local.get(); });
     }
     catch (error)
     {

@@ -9,6 +9,16 @@
       "strict_min_version": "102.0"
     }
   },
+  "experiment_apis": {
+      "domapi": {
+          "schema": "./api/domapi/schema.json",
+          "parent" : {
+              "scopes": ["addon_parent"],
+              "paths": [["domapi"]],
+              "script": "./api/domapi/implementation.js"
+          }
+      }
+  },
   "background": {
     "scripts": ["background.js"],
     "persistent": true
