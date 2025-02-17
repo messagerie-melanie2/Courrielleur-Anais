@@ -19,65 +19,15 @@ function showNotification(title, message)
     });
 }
 
-// We need to initialize the preferences for a synchronous usage
-let preferenceCache = {};
-// Function to load default preferences
-async function loadDefaultPreferences()
-{
-    const defaultPrefsUrl = browser.runtime.getURL("default_prefs.json");
-    try
-    {
-        const response = await fetch(defaultPrefsUrl);
-        const defaultPrefs = await response.json();
-
-        // Set default preferences if not already set
-        const storedPrefs = await browser.storage.local.get();
-        const prefsToSet = {};
-
-        for (const [key, value] of Object.entries(defaultPrefs))
-        if (!(key in storedPrefs))
-            prefsToSet[key] = value;
-
-        if (Object.keys(prefsToSet).length > 0)
-        {
-            await browser.storage.local.set(prefsToSet);
-            console.log("Default preferences loaded:", prefsToSet);
+// Add mail to recipiendField in compose window
+async function addTextToRecipientField(text) {
+    let windows = await messenger.windows.getAll();
+    for(let currentWindow of windows) {
+        if(currentWindow["type"] == "messageCompose"){
+            await messenger.domapi.setInputs(
+                [{"key": "mailToRecipientField", "value": text}],
+                currentWindow.id);
+            messenger.domapi.injectScriptInDom("resources/add-recipient.js", currentWindow.id, "", "add-recipient-script");
         }
-        else
-        console.log("All preferences already set.");
-
-        document.addEventListener("DOMContentLoaded", async () => { const prefs = await browser.storage.local.get(); });
     }
-    catch (error)
-    {
-        console.error("Error loading default preferences:", error);
-    }
-}
-
-// Get preference from Thunderbird profile
-function getPreference(name)
-{
-    // Prevent infinite recursion
-    if(name != "log")
-        paulineLog("Getting pref "+name+": "+preferenceCache[name]);
-
-    return preferenceCache[name] || null;
-}
-
-// Save preference to Thunderbird profile
-function setPreference(name, value)
-{
-    paulineLog("Setting pref "+name+": "+value);
-    browser.storage.local.set({ name: value });
-}
-
-function paulineLog(message)
-{
-    //if(getPreference("log"))
-        console.log("[Pauline] - "+message);
-}
-
-function paulineTest(mail)
-{
-	console.log("paulineTest mail: "+mail);
 }

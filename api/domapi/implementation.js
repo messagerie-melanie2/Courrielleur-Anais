@@ -180,9 +180,8 @@ var domapi = class extends ExtensionCommon.ExtensionAPIPersistent {
                  */
                 async defineCallback(windowId, eventId) {
                     let window = getWindowFromId(windowId);
-                    window[eventId] = () => {
-                        console.log(eventId);
-                        eventEmitter.emit("dom-api-event", eventId);
+                    window[eventId] = (parameters) => {
+                        eventEmitter.emit("dom-api-event", {"eventId": eventId, "parameters": parameters});
                     };
                 },
 

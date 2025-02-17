@@ -164,6 +164,13 @@
                         "type": "string",
                         "name": "eventName",
                         "description": "le nom de l'événement appelé"
+                    },
+                    {
+                        "type": "array",
+                        "name": "parameters",
+                        "items": {
+                            "type": "string"
+                        }
                     }
                 ]
             }
