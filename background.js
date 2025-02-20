@@ -10,8 +10,8 @@ async function createSpaceButton() {
     const buttonProperties = {
       title: "Contacts ministériels",
       defaultIcons: {
-        "18": "skin/images/anais_icon_18.png",
-        "32": "skin/images/anais_icon_32.png"
+        "18": "skin/images/logo-18.png",
+        "32": "skin/images/logo-32.png"
       }
     };
 
@@ -31,7 +31,7 @@ browser.runtime.onInstalled.addListener(() => {
 // ----------- COMPOSE MAIL BUTTON -----------
 async function openPauline(composeWindowId) {
   // TODO: use composeWindowId to add mail only to current window
-  await messenger.windows.create({'type': 'popup', 'url': paulineUrl});
+  await messenger.windows.create({'type': 'popup', 'url': messenger.extension.getURL("content/pauline.html")});
 }
 
 messenger.composeAction.onClicked.addListener(async (tab) => {
