@@ -1,5 +1,5 @@
 //var paulineUrl = "https://annuaire-preprod.e2.rie.gouv.fr/";
-var paulineUrl = "http://localhost:8000/"
+var paulineUrl = "https://annuaire-preprod.e2.rie.gouv.fr/"
 
 // --------------- SPACE TOOLBAR BUTTON ------
 // adding Pauline button inv the "spacesToolbar"

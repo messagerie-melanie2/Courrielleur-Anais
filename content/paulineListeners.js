@@ -1,5 +1,5 @@
 //const paulineUrl = 'https://annuaire-preprod.e2.rie.gouv.fr/';
-const paulineUrl = 'http://localhost:8000';
+const paulineUrl = 'https://annuaire-preprod.e2.rie.gouv.fr/';
 
 // Add a cache-busting query parameter to the iframe src
 function UpdateIframeSrc()
