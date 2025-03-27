@@ -1,15 +1,25 @@
-//const paulineUrl = 'https://annuaire-preprod.e2.rie.gouv.fr/';
 const paulineUrl = 'https://annuaire-preprod.e2.rie.gouv.fr/';
 
-// Add a cache-busting query parameter to the iframe src
-function UpdateIframeSrc()
+// Sets iframe url for Pauline
+function updateIframeSrc()
 {
-  const cacheBustedUrl = paulineUrl + '?nocache=' + new Date().getTime();
-  document.getElementById('pauline-iframe').src = cacheBustedUrl;
-}
+  let cacheBustedUrl = paulineUrl + '?nocache=' + new Date().getTime();
+  let defaultPauline = cacheBustedUrl;
+  let composePauline = cacheBustedUrl+"&source=courrielleur";
 
-// Call the function to set the iframe src on page load
-UpdateIframeSrc();
+  // checking for parameter "compose=true"
+  let compose = getQueryParam("compose") === "true";
+
+  // Setting iframe url
+  document.getElementById("pauline-iframe").src = compose ? composePauline : defaultPauline;
+}
+updateIframeSrc();
+
+// Retrieve a get parameter
+function getQueryParam(param) {
+  let urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
 
 // Listen for messages from the iframe
 window.addEventListener('message', async function(event) {
@@ -20,10 +30,10 @@ window.addEventListener('message', async function(event) {
 async function handlePaulineMessage(event)
 {
   // Ensure the message is from the correct origin
-  if (event.origin !== paulineUrl) {
+  /*if (event.origin !== paulineUrl) {
       showNotification("Message inconnu", "Message reçu de la source non reconnue: "+event.origin);
       return;
-  }
+  }*/
 
   // Check the action and perform the desired script
   if (event.data.action === 'addRecipient') {

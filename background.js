@@ -1,5 +1,5 @@
 //var paulineUrl = "https://annuaire-preprod.e2.rie.gouv.fr/";
-var paulineUrl = "https://annuaire-preprod.e2.rie.gouv.fr/"
+var paulineUrl = "https://annuaire-preprod.e2.rie.gouv.fr?courrielleur=true"
 
 // --------------- SPACE TOOLBAR BUTTON ------
 // adding Pauline button inv the "spacesToolbar"
@@ -31,7 +31,9 @@ browser.runtime.onInstalled.addListener(() => {
 // ----------- COMPOSE MAIL BUTTON -----------
 async function openPauline(composeWindowId) {
   // TODO: use composeWindowId to add mail only to current window
-  await messenger.windows.create({'type': 'popup', 'url': messenger.extension.getURL("content/pauline.html")});
+  let composePaulineUrl = messenger.extension.getURL("content/pauline.html")+ "?compose=true";
+  console.log(composePaulineUrl);
+  await messenger.windows.create({'type': 'popup', 'url': composePaulineUrl });
 }
 
 messenger.composeAction.onClicked.addListener(async (tab) => {
