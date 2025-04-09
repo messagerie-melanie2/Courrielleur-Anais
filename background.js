@@ -2,7 +2,6 @@
 var paulineUrl = "https://annuaire-preprod.e2.rie.gouv.fr?courrielleur=true"
 
 // --------------- SPACE TOOLBAR BUTTON ------
-// adding Pauline button inv the "spacesToolbar"
 async function createSpaceButton() {
   try {
     const spaceName = "Pauline";
@@ -16,16 +15,12 @@ async function createSpaceButton() {
     };
 
     const space = await browser.spaces.create(spaceName, defaultUrl, buttonProperties);
-    console.log(`Space created with ID: ${space.id}`);
+    console.log(`Pauline button created with space ID: ${space.id}`);
   } catch (error) {
     console.error("Error creating space:", error);
   }
 }
-
-// Add button on extension launch
-browser.runtime.onInstalled.addListener(() => {
-  createSpaceButton();
-});
+createSpaceButton();
 // -------------------------------------------
 
 // ----------- COMPOSE MAIL BUTTON -----------
