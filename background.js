@@ -20,7 +20,25 @@ async function createSpaceButton() {
     console.error("Error creating space:", error);
   }
 }
-createSpaceButton();
+// Make sure the Pauline spacestoolbar button is added
+async function waitForMailTabAndRun() {
+  const tabs = await browser.tabs.query({});
+
+  for (const tab of tabs) {
+    if (tab.mailTab) {
+      createSpaceButton();
+      return;
+    }
+  }
+
+  // Wait until a mail tab is created
+  browser.tabs.onCreated.addListener(async (tab) => {
+    if (tab.mailTab) {
+      createSpaceButton();
+    }
+  });
+}
+waitForMailTabAndRun();
 // -------------------------------------------
 
 // ----------- COMPOSE MAIL BUTTON -----------

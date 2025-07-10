@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Pauline",
   "version": "1.0",
-  "description": "Extension de consultation des contacts ministeriels",
+  "description": "Extension de consultation des contacts ministeriels.",
   "applications": {
     "gecko": {
       "id": "pauline@developpement-durable.fr",
