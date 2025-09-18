@@ -113,6 +113,10 @@
       <menuitem id="navContext-markAsJunk"
                 class="menuitem-iconic"
                 data-l10n-id="context-menu-mark-junk"/>
+      <menuitem id="navContext-markAsNotJunk"
+                class="menuitem-iconic"
+                data-l10n-id="context-menu-mark-not-junk"
+                active="true"/>
       <menuitem id="navContext-delete"
                 class="menuitem-iconic"/>
     </menugroup>
@@ -289,8 +293,8 @@
                  mode="filing"
                  showFileHereLabel="true"
                  showRecent="true"
-                 recentLabel="&contextMoveCopyMsgRecentMenu.label;"
-                 recentAccessKey="&contextMoveCopyMsgRecentMenu.accesskey;"
+                 recentLabel="&contextMoveCopyMsgRecentDestinationMenu.label;"
+                 recentAccessKey="&contextMoveCopyMsgRecentDestinationMenu.accesskey;"
                  showFavorites="true"
                  favoritesLabel="&contextMoveCopyMsgFavoritesMenu.label;"
                  favoritesAccessKey="&contextMoveCopyMsgFavoritesMenu.accesskey;">
@@ -304,8 +308,8 @@
                  mode="filing"
                  showFileHereLabel="true"
                  showRecent="true"
-                 recentLabel="&contextMoveCopyMsgRecentMenu.label;"
-                 recentAccessKey="&contextMoveCopyMsgRecentMenu.accesskey;"
+                 recentLabel="&contextMoveCopyMsgRecentDestinationMenu.label;"
+                 recentAccessKey="&contextMoveCopyMsgRecentDestinationMenu.accesskey;"
                  showFavorites="true"
                  favoritesLabel="&contextMoveCopyMsgFavoritesMenu.label;"
                  favoritesAccessKey="&contextMoveCopyMsgFavoritesMenu.accesskey;"/>
@@ -403,8 +407,8 @@
                      mode="filing"
                      showFileHereLabel="true"
                      showRecent="true"
-                     recentLabel="&contextMoveCopyMsgRecentMenu.label;"
-                     recentAccessKey="&contextMoveCopyMsgRecentMenu.accesskey;"
+                     recentLabel="&contextMoveCopyMsgRecentDestinationMenu.label;"
+                     recentAccessKey="&contextMoveCopyMsgRecentDestinationMenu.accesskey;"
                      showFavorites="true"
                      favoritesLabel="&contextMoveCopyMsgFavoritesMenu.label;"
                      favoritesAccessKey="&contextMoveCopyMsgFavoritesMenu.accesskey;"
@@ -593,6 +597,7 @@
               accesskey="&CopyNameAndEmailAddress.accesskey;"
               class="menuitem-iconic"
               oncommand="gMessageHeader.copyAddress(event, true);"/>
+	<!-- PATCH Pauline -->
     <menuitem id="showPaulineProperties" data-l10n-id="text-action-properties"
               class="menuitem-iconic"
               oncommand="openPaulineProperties(event.currentTarget.parentNode.headerField.textContent);"/>
@@ -610,6 +615,7 @@
       }
       ]]>
     </script>
+	<!-- FIN PATCH Pauline -->
     <menuseparator/>
     <menuitem id="searchKeysOpenPGP" data-l10n-id="openpgp-search-keys-openpgp"
               class="menuitem-iconic"
@@ -647,6 +653,11 @@
     <menuitem id="listIdPlaceHolder"
               class="menuitem-iconic"
               disabled="true"/>
+    <menuseparator/>
+    <menuitem id="listIdCopy"
+              data-l10n-id="text-action-copy"
+              class="menuitem-iconic"
+              oncommand="gMessageHeader.copyString(event);event.stopPropagation();"/>
     <menuseparator/>
     <menuitem id="listIdListHelp" data-l10n-id="list-id-context-list-help"
               data-header-name="list-help"
@@ -948,11 +959,9 @@
                      class="toolbarbutton-1 message-header-view-button hdrJunkButton"
                      oncommand="goDoCommand('cmd_markAsJunk');"/>
       <toolbarbutton id="hdrTrashButton"
-                     label="&hdrTrashButton1.label;"
-                     tooltiptext="&hdrTrashButton1.tooltip;"
+                     data-l10n-id="message-header-delete"
                      observes="cmd_delete"
-                     class="toolbarbutton-1 message-header-view-button hdrTrashButton"
-                     oncommand="goDoCommand(event.shiftKey ? 'cmd_shiftDelete' : 'cmd_delete');"/>
+                     class="toolbarbutton-1 message-header-view-button hdrTrashButton"/>
       <toolbarbutton id="otherActionsButton"
                      type="menu"
                      wantdropmarker="true"
@@ -1066,7 +1075,7 @@
                 class="menu-iconic"
                 label="&bodyMenu.label;">
             <menupopup id="hdrFeedBodyAsDropdown"
-                       onpopupshowing="InitOtherActionsViewBodyMenu();">
+                       onpopupshowing="InitOtherActionsViewBodyMenu(true);">
               <menuitem id="otherActionsMenu_bodyFeedGlobalWebPage"
                         type="radio"
                         name="viewFeedSummaryGroup"
@@ -1090,17 +1099,17 @@
                         type="radio"
                         name="viewFeedBodyHTMLGroup"
                         label="&bodyAllowHTML.label;"
-                        oncommand="top.MsgFeedBodyRenderPrefs(false, 0, 0)"/>
+                        oncommand="top.MsgBodyAllowHTML()"/>
               <menuitem id="otherActionsMenu_bodyFeedSummarySanitized"
                         type="radio"
                         name="viewFeedBodyHTMLGroup"
                         label="&bodySanitized.label;"
-                        oncommand="top.MsgFeedBodyRenderPrefs(false, 3, gDisallow_classes_no_html)"/>
+                        oncommand="top.MsgBodySanitized()"/>
               <menuitem id="otherActionsMenu_bodyFeedSummaryAsPlaintext"
                         type="radio"
                         name="viewFeedBodyHTMLGroup"
                         label="&bodyAsPlaintext.label;"
-                        oncommand="top.MsgFeedBodyRenderPrefs(true, 1, gDisallow_classes_no_html)"/>
+                        oncommand="top.MsgBodyAsPlaintext()"/>
             </menupopup>
           </menu>
           <menuseparator/>
@@ -1218,6 +1227,13 @@
                class="message-header-datetime"
                aria-readonly="true"
                hidden="hidden"></html:time>
+    <html:div id="darkReaderToggle" xmlns="http://www.w3.org/1999/xhtml">
+      <label for="disableDarkReader" class="toggle-label">
+        <input id="disableDarkReader"
+               type="checkbox"
+               class="toggle-checkbox toggle-checkbox-sm dark-reader-toggle" />
+      </label>
+    </html:div>
   </html:div>
 
   <!-- Tags -->
@@ -1387,6 +1403,10 @@
         <checkbox id="headerViewAllHeaders"
                   data-l10n-id="message-header-all-headers"
                   oncommand="gHeaderCustomize.toggleAllHeaders(event);"/>
+
+        <checkbox id="headerShowDarkToggle"
+                  data-l10n-id="message-header-dark-message-toggle"
+                  oncommand="gHeaderCustomize.toggleDarkToggle(event);"/>
       </html:div>
     </html:div>
 
@@ -1810,7 +1830,7 @@
               flex="1"
               hidden="true">
           <html:div id="calendarInvitationDisplay">
-           <!-- The calendar invitation panel is displayed here. -->
+            <!-- The calendar invitation panel is displayed here. -->
           </html:div>
         </vbox>
 
@@ -1937,7 +1957,7 @@
                                        role="listbox"
                                        ondragstart="attachmentListDNDObserver.onDragStart(event);"/>
         </vbox>
-        <findbar id="FindToolbar" browserid="messagepane"/>
+        <findbar id="findToolbar" browserid="messagepane"/>
       </vbox>
   <panel id="messageSecurityPanel"
          type="arrow"
