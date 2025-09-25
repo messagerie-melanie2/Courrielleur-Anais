@@ -9,6 +9,7 @@ function updateIframeSrc()
 
   // checking for parameter "compose=true"
   let compose = getQueryParam("compose") === "true";
+  console.log("Compose is: "+compose);
 
   // Setting iframe url
   document.getElementById("pauline-iframe").src = compose ? composePauline : defaultPauline;
@@ -29,6 +30,7 @@ window.addEventListener('message', async function(event) {
 // Handle message from external Pauline website
 async function handlePaulineMessage(event)
 {
+  console.log("Recieved message");
   // Ensure the message is from the correct origin
   /*if (event.origin !== paulineUrl) {
       showNotification("Message inconnu", "Message reçu de la source non reconnue: "+event.origin);

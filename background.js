@@ -44,7 +44,8 @@ waitForMailTabAndRun();
 // ----------- COMPOSE MAIL BUTTON -----------
 async function openPauline(composeWindowId) {
   // TODO: use composeWindowId to add mail only to current window
-  let composePaulineUrl = messenger.extension.getURL("content/pauline.html")+ "?compose=true";
+  console.log("Opening compose Pauline");
+  let composePaulineUrl = messenger.runtime.getURL("content/pauline.html")+ "?compose=true";
   console.log(composePaulineUrl);
   await messenger.windows.create({'type': 'popup', 'url': composePaulineUrl, 'width': 1200, 'height': 700 });
 }
