@@ -8,10 +8,18 @@ async function createSpaceButton() {
     const defaultUrl = browser.runtime.getURL("content/pauline.html");
     const buttonProperties = {
       title: "Contacts ministériels",
-      defaultIcons: {
-        "18": "skin/images/logo-18.png",
-        "32": "skin/images/logo-32.png"
-      }
+      themeIcons: [
+        {
+          "light": "skin/images/annuaire_light.svg",
+          "dark": "skin/images/annuaire_dark.svg",
+          "size": 18
+        },
+        {
+          "light": "skin/images/annuaire_light.svg",
+          "dark": "skin/images/annuaire_dark.svg",
+          "size": 32
+        }
+      ]
     };
 
     const space = await browser.spaces.create(spaceName, defaultUrl, buttonProperties);
