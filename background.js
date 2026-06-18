@@ -3,6 +3,9 @@ var paulineUrl = "https://annuaire-preprod.e2.rie.gouv.fr?courrielleur=true"
 
 // --------------- SPACE TOOLBAR BUTTON ------
 async function createSpaceButton() {
+  // Délai de 1 seconde pour laisser WebApps s'enregistrer en premier (donc Pauline apparaît en dessous)
+  await new Promise(resolve => setTimeout(resolve, 200));
+
   try {
     const spaceName = "Pauline";
     const defaultUrl = browser.runtime.getURL("content/pauline.html");
@@ -53,9 +56,9 @@ waitForMailTabAndRun();
 async function openPauline(composeWindowId) {
   // TODO: use composeWindowId to add mail only to current window
   console.log("Opening compose Pauline");
-  let composePaulineUrl = messenger.runtime.getURL("content/pauline.html")+ "?compose=true";
+  let composePaulineUrl = messenger.runtime.getURL("content/pauline.html") + "?compose=true";
   console.log(composePaulineUrl);
-  await messenger.windows.create({'type': 'popup', 'url': composePaulineUrl, 'width': 1200, 'height': 700 });
+  await messenger.windows.create({ 'type': 'popup', 'url': composePaulineUrl, 'width': 1200, 'height': 700 });
 }
 
 messenger.composeAction.onClicked.addListener(async (tab) => {
