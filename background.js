@@ -7,7 +7,7 @@ async function createSpaceButton() {
     const spaceName = "Pauline";
     const defaultUrl = browser.runtime.getURL("content/pauline.html");
     const buttonProperties = {
-      title: "Contacts ministériels",
+      title: "Annuaire",
       themeIcons: [
         {
           "light": "skin/images/annuaire_light.svg",
