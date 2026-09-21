@@ -1,34 +1,79 @@
 //var paulineUrl = "https://annuaire-preprod.e2.rie.gouv.fr/";
 var paulineUrl = "https://annuaire-preprod.e2.rie.gouv.fr?courrielleur=true"
 
+// Helper pour créer un espace ou mettre à jour ses propriétés s'il existe déjà
+async function registerOrUpdateSpace(name, url, buttonProperties) {
+  try {
+    const existingSpaces = await browser.spaces.query({ isSelfOwned: true });
+    const existing = existingSpaces?.find(s => s.name === name);
+    if (existing) {
+      const spaceId = existing.id ?? existing.spaceId;
+      console.log(`[Pauline] - Space ${name} déjà existant (id: ${spaceId}), mise à jour des propriétés...`);
+      await browser.spaces.update(spaceId, { url }, buttonProperties);
+      console.log(`[Pauline] - Space ${name} mis à jour avec succès`);
+      return existing;
+    }
+    const created = await browser.spaces.create(name, url, buttonProperties);
+    console.log(`[Pauline] - Space ${name} créé avec succès, id:`, created?.id);
+    return created;
+  } catch (e) {
+    if (e.message?.includes("already exists")) {
+      console.log(`[Pauline] - Space ${name} déjà existant lors du create, tentative de mise à jour...`);
+      try {
+        const existingSpaces = await browser.spaces.query({ isSelfOwned: true });
+        const existing = existingSpaces?.find(s => s.name === name);
+        if (existing) {
+          const spaceId = existing.id ?? existing.spaceId;
+          await browser.spaces.update(spaceId, { url }, buttonProperties);
+          console.log(`[Pauline] - Space ${name} mis à jour après exception`);
+          return existing;
+        }
+      } catch (updateErr) {
+        console.error(`[Pauline] - Erreur lors de la mise à jour de ${name}:`, updateErr);
+      }
+    } else {
+      console.error(`[Pauline] - Erreur registerOrUpdateSpace (${name}):`, e);
+    }
+  }
+}
+
 // --------------- SPACE TOOLBAR BUTTON ------
 async function createSpaceButton() {
-  // Délai de 1 seconde pour laisser WebApps s'enregistrer en premier (donc Pauline apparaît en dessous)
+  // Délai pour laisser WebApps s'enregistrer en premier (donc Pauline apparaît en dessous)
   await new Promise(resolve => setTimeout(resolve, 200));
 
   try {
+    try {
+      browser.domapi?.init?.();
+    } catch (e) { }
+
     const spaceName = "Pauline";
     const defaultUrl = browser.runtime.getURL("content/pauline.html");
     const buttonProperties = {
       title: "Annuaire",
       themeIcons: [
         {
-          "light": "skin/images/annuaire_light.svg",
-          "dark": "skin/images/annuaire_dark.svg",
+          "dark": "skin/images/annuaire_light.svg",
+          "light": "skin/images/annuaire_dark.svg",
+          "size": 16
+        },
+        {
+          "dark": "skin/images/annuaire_light.svg",
+          "light": "skin/images/annuaire_dark.svg",
           "size": 18
         },
         {
-          "light": "skin/images/annuaire_light.svg",
-          "dark": "skin/images/annuaire_dark.svg",
+          "dark": "skin/images/annuaire_light.svg",
+          "light": "skin/images/annuaire_dark.svg",
           "size": 32
         }
       ]
     };
 
-    const space = await browser.spaces.create(spaceName, defaultUrl, buttonProperties);
-    console.log(`Pauline button created with space ID: ${space.id}`);
+    await registerOrUpdateSpace(spaceName, defaultUrl, buttonProperties);
+    console.log(`[Pauline] - Space button initialisé avec succès`);
   } catch (error) {
-    console.error("Error creating space:", error);
+    console.error("[Pauline] - Error creating/updating space:", error);
   }
 }
 // Make sure the Pauline spacestoolbar button is added

@@ -3,6 +3,13 @@
         "namespace": "domapi",
         "functions": [
             {
+                "name": "init",
+                "type": "function",
+                "async": true,
+                "description": "Initialise les styles et le thème pour la barre d'espaces",
+                "parameters": []
+            },
+            {
                 "name": "injectScriptInDom",
                 "type": "function",
                 "async": true,

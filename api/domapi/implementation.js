@@ -1,7 +1,158 @@
+var { classes: Cc, interfaces: Ci } = Components;
 var { ExtensionCommon } = ChromeUtils.importESModule("resource://gre/modules/ExtensionCommon.sys.mjs");
 
-const Services = globalThis.Services;
+const Services = globalThis.Services || ChromeUtils.importESModule("resource://gre/modules/Services.sys.mjs").Services;
 const eventEmitter = new ExtensionCommon.EventEmitter();
+
+function setupSpacesToolbarTheme(w) {
+  try {
+    const toolbar = w.document?.getElementById("spacesToolbar");
+    if (!toolbar) return;
+
+    const STYLE_ID = "webapp-spaces-theme-override";
+    if (!w.document.getElementById(STYLE_ID)) {
+      try {
+        const styleEl = w.document.createElementNS("http://www.w3.org/1999/xhtml", "style");
+        styleEl.id = STYLE_ID;
+        styleEl.textContent = `
+          :root[data-spaces-theme-mode="dark"] .spaces-addon-button img,
+          :root[data-spaces-theme-mode="dark"] .spaces-addon-menuitem,
+          #spacesToolbar[data-theme-mode="dark"] .spaces-addon-button img,
+          #spacesToolbar[data-theme-mode="dark"] .spaces-addon-menuitem {
+            content: var(--webextension-toolbar-image-light, inherit) !important;
+            --menuitem-icon: var(--webextension-toolbar-image-light, inherit) !important;
+          }
+
+          :root[data-spaces-theme-mode="light"] .spaces-addon-button img,
+          :root[data-spaces-theme-mode="light"] .spaces-addon-menuitem,
+          #spacesToolbar[data-theme-mode="light"] .spaces-addon-button img,
+          #spacesToolbar[data-theme-mode="light"] .spaces-addon-menuitem {
+            content: var(--webextension-toolbar-image-dark, inherit) !important;
+            --menuitem-icon: var(--webextension-toolbar-image-dark, inherit) !important;
+          }
+        `;
+        (w.document.head || w.document.documentElement).appendChild(styleEl);
+      } catch (e) {
+        console.error("[Pauline] - Erreur injection style de thème:", e);
+      }
+    }
+
+    const updateToolbarTheme = () => {
+      try {
+        let isDark = false;
+
+        const tbCs = w.getComputedStyle(toolbar)?.colorScheme;
+        const rootCs = w.getComputedStyle(w.document.documentElement)?.colorScheme;
+        if (tbCs === "dark" || rootCs === "dark") {
+          isDark = true;
+        } else if (tbCs === "light" || rootCs === "light") {
+          isDark = false;
+        } else {
+          const sampleBtn = toolbar.querySelector(".spaces-toolbar-button") || toolbar.querySelector("button");
+          const sampleEl = sampleBtn || toolbar;
+          const computedColor = w.getComputedStyle(sampleEl)?.color || "";
+          const rgbMatch = computedColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+          if (rgbMatch) {
+            const r = parseInt(rgbMatch[1], 10);
+            const g = parseInt(rgbMatch[2], 10);
+            const b = parseInt(rgbMatch[3], 10);
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            isDark = brightness > 128;
+          } else {
+            isDark = w.matchMedia?.("(prefers-color-scheme: dark)")?.matches || false;
+          }
+        }
+
+        const mode = isDark ? "dark" : "light";
+        if (toolbar.getAttribute("data-theme-mode") !== mode) {
+          toolbar.setAttribute("data-theme-mode", mode);
+          w.document.documentElement?.setAttribute("data-spaces-theme-mode", mode);
+          console.log(`[Pauline] - Thème spacesToolbar détecté: ${mode}`);
+        }
+      } catch (e) {
+        console.error("[Pauline] - Erreur détection thème:", e);
+      }
+    };
+
+    if (w._pauline_theme_listener) {
+      try {
+        w.removeEventListener("windowlwthemeupdate", w._pauline_theme_listener);
+      } catch (e) { }
+      w._pauline_theme_listener = null;
+    }
+    w._pauline_theme_listener = updateToolbarTheme;
+    w.addEventListener("windowlwthemeupdate", updateToolbarTheme);
+
+    if (w._pauline_media_listener && w._pauline_mql?.removeEventListener) {
+      try {
+        w._pauline_mql.removeEventListener("change", w._pauline_media_listener);
+      } catch (e) { }
+    }
+    try {
+      const mql = w.matchMedia("(prefers-color-scheme: dark)");
+      if (mql?.addEventListener) {
+        w._pauline_mql = mql;
+        w._pauline_media_listener = updateToolbarTheme;
+        mql.addEventListener("change", updateToolbarTheme);
+      }
+    } catch (e) { }
+
+    updateToolbarTheme();
+    w.setTimeout(updateToolbarTheme, 200);
+    w.setTimeout(updateToolbarTheme, 500);
+    w.setTimeout(updateToolbarTheme, 1500);
+  } catch (err) {
+    console.error("[Pauline] - Erreur dans setupSpacesToolbarTheme:", err);
+  }
+}
+
+function initSpacesTheme(context) {
+  try {
+    const WM = Cc["@mozilla.org/appshell/window-mediator;1"]?.getService(Ci.nsIWindowMediator) || Services.wm;
+    const win = WM.getMostRecentWindow("mail:3pane") || WM.getMostRecentWindow(null);
+    if (win) {
+      setupSpacesToolbarTheme(win);
+    }
+
+    const docObserver = {
+      observe(subject, topic, data) {
+        try {
+          const w = subject?.defaultView;
+          if (!w) return;
+          const href = w.location?.href || "";
+          if (href.includes("messenger.xhtml") || href.includes("3pane")) {
+            w.setTimeout(() => {
+              try {
+                setupSpacesToolbarTheme(w);
+              } catch (e) { }
+            }, 100);
+          }
+        } catch (e) { }
+      }
+    };
+    Services.obs.addObserver(docObserver, "chrome-document-loaded");
+
+    if (context?.callOnClose) {
+      context.callOnClose({
+        close() {
+          try {
+            Services.obs.removeObserver(docObserver, "chrome-document-loaded");
+          } catch (e) { }
+          try {
+            if (win?._pauline_theme_listener) {
+              win.removeEventListener("windowlwthemeupdate", win._pauline_theme_listener);
+            }
+            if (win?._pauline_media_listener && win?._pauline_mql?.removeEventListener) {
+              win._pauline_mql.removeEventListener("change", win._pauline_media_listener);
+            }
+          } catch (e) { }
+        }
+      });
+    }
+  } catch (e) {
+    console.error("[Pauline] - Erreur init spacesToolbar:", e);
+  }
+}
 
 var domapi = class extends ExtensionCommon.ExtensionAPIPersistent {
 
@@ -25,6 +176,7 @@ var domapi = class extends ExtensionCommon.ExtensionAPIPersistent {
 
 
     getAPI(context) {
+        initSpacesTheme(context);
 
         function getWindowFromId(windowId) {
             return context.extension.windowManager.get(windowId).window;
@@ -71,6 +223,9 @@ var domapi = class extends ExtensionCommon.ExtensionAPIPersistent {
 
         return {
             domapi : {
+                async init() {
+                    initSpacesTheme(context);
+                },
                 /**
                  * Integre un script dans un sous document du DOM principal
                  * 
