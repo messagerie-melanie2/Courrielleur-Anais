@@ -4,75 +4,256 @@ var { ExtensionCommon } = ChromeUtils.importESModule("resource://gre/modules/Ext
 const Services = globalThis.Services || ChromeUtils.importESModule("resource://gre/modules/Services.sys.mjs").Services;
 const eventEmitter = new ExtensionCommon.EventEmitter();
 
-function setupSpacesToolbarTheme(w) {
+function injectThemeOverrideStyle(w) {
   try {
-    const toolbar = w.document?.getElementById("spacesToolbar");
-    if (!toolbar) return;
-
+    if (!w || !w.document) return;
     const STYLE_ID = "webapp-spaces-theme-override";
-    if (!w.document.getElementById(STYLE_ID)) {
-      try {
-        const styleEl = w.document.createElementNS("http://www.w3.org/1999/xhtml", "style");
-        styleEl.id = STYLE_ID;
-        styleEl.textContent = `
-          :root[data-spaces-theme-mode="dark"] .spaces-addon-button img,
-          :root[data-spaces-theme-mode="dark"] .spaces-addon-menuitem,
-          #spacesToolbar[data-theme-mode="dark"] .spaces-addon-button img,
-          #spacesToolbar[data-theme-mode="dark"] .spaces-addon-menuitem {
-            content: var(--webextension-toolbar-image-light, inherit) !important;
-            --menuitem-icon: var(--webextension-toolbar-image-light, inherit) !important;
-          }
+    let styleEl = w.document.getElementById(STYLE_ID);
+    const isNew = !styleEl;
+    if (isNew) {
+      styleEl = w.document.createElementNS("http://www.w3.org/1999/xhtml", "style");
+      styleEl.id = STYLE_ID;
+    }
+    const cssText = `
+      /* 1. PAR DÉFAUT et THÈME CLAIR : toujours afficher l'icône du thème clair (--webextension-toolbar-image-dark = _dark.svg) */
+      :root .spaces-addon-button img,
+      :root[data-spaces-theme-mode="light"] .spaces-addon-button img,
+      #spacesToolbar[data-theme-mode="light"] .spaces-addon-button img {
+        content: var(--webextension-toolbar-image-dark, var(--webextension-toolbar-image, inherit)) !important;
+      }
 
-          :root[data-spaces-theme-mode="light"] .spaces-addon-button img,
-          :root[data-spaces-theme-mode="light"] .spaces-addon-menuitem,
-          #spacesToolbar[data-theme-mode="light"] .spaces-addon-button img,
-          #spacesToolbar[data-theme-mode="light"] .spaces-addon-menuitem {
-            content: var(--webextension-toolbar-image-dark, inherit) !important;
-            --menuitem-icon: var(--webextension-toolbar-image-dark, inherit) !important;
-          }
-        `;
-        (w.document.head || w.document.documentElement).appendChild(styleEl);
-      } catch (e) {
-        console.error("[Pauline] - Erreur injection style de thème:", e);
+      :root .spaces-addon-menuitem,
+      :root #spacesToolbarAddonsPopup .spaces-popup-menuitem,
+      :root[data-spaces-theme-mode="light"] .spaces-addon-menuitem,
+      :root[data-spaces-theme-mode="light"] #spacesToolbarAddonsPopup .spaces-popup-menuitem,
+      #spacesToolbar[data-theme-mode="light"] .spaces-addon-menuitem {
+        list-style-image: var(--webextension-toolbar-image-dark, var(--webextension-toolbar-image, inherit)) !important;
+        --menuitem-icon: var(--webextension-toolbar-image-dark, var(--webextension-toolbar-image, inherit)) !important;
+      }
+
+      /* 2. THÈME SOMBRE DÉTECTÉ : basculer sur l'icône du thème sombre (--webextension-toolbar-image-light = _light.svg) */
+      :root[data-spaces-theme-mode="dark"] .spaces-addon-button img,
+      #spacesToolbar[data-theme-mode="dark"] .spaces-addon-button img {
+        content: var(--webextension-toolbar-image-light, var(--webextension-toolbar-image, inherit)) !important;
+      }
+
+      :root[data-spaces-theme-mode="dark"] .spaces-addon-menuitem,
+      :root[data-spaces-theme-mode="dark"] #spacesToolbarAddonsPopup .spaces-popup-menuitem,
+      #spacesToolbar[data-theme-mode="dark"] .spaces-addon-menuitem {
+        list-style-image: var(--webextension-toolbar-image-light, var(--webextension-toolbar-image, inherit)) !important;
+        --menuitem-icon: var(--webextension-toolbar-image-light, var(--webextension-toolbar-image, inherit)) !important;
+      }
+    `;
+    if (styleEl.textContent !== cssText) {
+      styleEl.textContent = cssText;
+    }
+    if (isNew) {
+      (w.document.head || w.document.documentElement).appendChild(styleEl);
+      console.log("[Pauline] - Style de détection de thème injecté avec succès");
+    }
+  } catch (e) {
+    console.error("[Pauline] - Erreur injection style de thème:", e);
+  }
+}
+
+function parseCssColorToRgb(w, cssColor) {
+  if (!cssColor || typeof cssColor !== "string") return null;
+  const trimmed = cssColor.trim();
+  if (!trimmed || trimmed === "transparent") return null;
+
+  try {
+    if (w.InspectorUtils && typeof w.InspectorUtils.colorToRGBA === "function") {
+      const rgba = w.InspectorUtils.colorToRGBA(trimmed, w.document);
+      if (rgba) {
+        if (typeof rgba.a === "number" && rgba.a <= 0.1) return null;
+        return { r: rgba.r, g: rgba.g, b: rgba.b, a: rgba.a ?? 1 };
+      }
+    }
+  } catch (_) {}
+
+  const rgbMatch = trimmed.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*[,/]\s*([\d.]+))?\s*\)/i);
+  if (rgbMatch) {
+    const a = rgbMatch[4] !== undefined ? parseFloat(rgbMatch[4]) : 1;
+    if (a <= 0.1) return null;
+    return {
+      r: parseInt(rgbMatch[1], 10),
+      g: parseInt(rgbMatch[2], 10),
+      b: parseInt(rgbMatch[3], 10),
+      a,
+    };
+  }
+
+  const hexMatch = trimmed.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hexMatch) {
+    let hex = hexMatch[1];
+    if (hex.length === 3) {
+      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    const num = parseInt(hex, 16);
+    return {
+      r: (num >> 16) & 255,
+      g: (num >> 8) & 255,
+      b: num & 255,
+      a: 1,
+    };
+  }
+
+  return null;
+}
+
+function getColorLuminance(rgb) {
+  if (!rgb) return null;
+  return (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+}
+
+function normalizeSpacesAddonButtonIcons(w) {
+  try {
+    const elements = w.document?.querySelectorAll(
+      ".spaces-addon-button img, .spaces-addon-menuitem, #spacesToolbarAddonsPopup .spaces-popup-menuitem"
+    );
+    if (!elements) return;
+    for (const el of elements) {
+      const darkVar = el.style?.getPropertyValue("--webextension-toolbar-image-dark") || "";
+      const lightVar = el.style?.getPropertyValue("--webextension-toolbar-image-light") || "";
+      if (darkVar.includes("_light.") && lightVar.includes("_dark.")) {
+        el.style.setProperty("--webextension-toolbar-image-dark", lightVar);
+        el.style.setProperty("--webextension-toolbar-image-light", darkVar);
+        el.style.setProperty("--webextension-toolbar-image", lightVar);
+      }
+    }
+  } catch (_) {}
+}
+
+function detectSpacesToolbarIsDark(w, toolbar) {
+  try {
+    const doc = w?.document;
+    const root = doc?.documentElement;
+    if (!w || !doc || !root) return false;
+
+    // 1. Personnalisation explicite des couleurs de la spacesToolbar par l'utilisateur
+    const customIconColor =
+      w.gSpacesToolbar?.customizeData?.color ||
+      root.style?.getPropertyValue("--spaces-button-text-color")?.trim();
+    if (customIconColor) {
+      const iconRgb = parseCssColorToRgb(w, customIconColor);
+      if (iconRgb) {
+        return getColorLuminance(iconRgb) > 128;
       }
     }
 
-    const updateToolbarTheme = () => {
-      try {
-        let isDark = false;
+    const customBgColor =
+      w.gSpacesToolbar?.customizeData?.background ||
+      root.style?.getPropertyValue("--spaces-bg-color")?.trim();
+    if (customBgColor) {
+      const bgRgb = parseCssColorToRgb(w, customBgColor);
+      if (bgRgb) {
+        return getColorLuminance(bgRgb) < 128;
+      }
+    }
 
-        const tbCs = w.getComputedStyle(toolbar)?.colorScheme;
-        const rootCs = w.getComputedStyle(w.document.documentElement)?.colorScheme;
-        if (tbCs === "dark" || rootCs === "dark") {
-          isDark = true;
-        } else if (tbCs === "light" || rootCs === "light") {
-          isDark = false;
-        } else {
-          const sampleBtn = toolbar.querySelector(".spaces-toolbar-button") || toolbar.querySelector("button");
-          const sampleEl = sampleBtn || toolbar;
-          const computedColor = w.getComputedStyle(sampleEl)?.color || "";
-          const rgbMatch = computedColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-          if (rgbMatch) {
-            const r = parseInt(rgbMatch[1], 10);
-            const g = parseInt(rgbMatch[2], 10);
-            const b = parseInt(rgbMatch[3], 10);
-            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-            isDark = brightness > 128;
-          } else {
-            isDark = w.matchMedia?.("(prefers-color-scheme: dark)")?.matches || false;
-          }
+    // 2. Attributs de thème Thunderbird posés de manière synchrone sur :root par LightweightThemeConsumer.sys.mjs
+    const lwtToolbar = root.getAttribute("lwt-toolbar");
+    if (lwtToolbar === "dark") return true;
+    if (lwtToolbar === "light") return false;
+
+    if (root.hasAttribute("lwtheme-brighttext") || root.hasAttribute("lwt-tree-brighttext")) {
+      return true;
+    }
+    if (root.hasAttribute("lwtheme")) {
+      return false;
+    }
+
+    // 3. Préférence Thunderbird browser.theme.toolbar-theme (0 = dark, 1 = light, 2 = system/auto)
+    try {
+      const toolbarThemePref = Services.prefs.getIntPref("browser.theme.toolbar-theme", 2);
+      if (toolbarThemePref === 0) return true;
+      if (toolbarThemePref === 1) return false;
+    } catch (_) {}
+
+    // 4. En mode thème système (auto), le media query du document chrome reflète light-dark(#e8e8e8, #252525)
+    if (typeof w.matchMedia === "function") {
+      return Boolean(w.matchMedia("(prefers-color-scheme: dark)")?.matches);
+    }
+
+    // 5. Fallback sur la couleur de fond réelle de #spacesToolbar ou d'un bouton natif NON actif (:not(.current))
+    if (toolbar && !toolbar.hidden) {
+      const bgRgb = parseCssColorToRgb(w, w.getComputedStyle(toolbar)?.backgroundColor);
+      if (bgRgb) {
+        return getColorLuminance(bgRgb) < 128;
+      }
+    }
+    if (toolbar) {
+      const inactiveBtn =
+        toolbar.querySelector(".spaces-toolbar-button:not(.current):not(.spaces-addon-button)") ||
+        toolbar.querySelector(".spaces-toolbar-button:not(.current)");
+      if (inactiveBtn) {
+        const fgRgb = parseCssColorToRgb(w, w.getComputedStyle(inactiveBtn)?.color);
+        if (fgRgb) {
+          return getColorLuminance(fgRgb) > 128;
         }
+      }
+    }
 
+    return false;
+  } catch (e) {
+    console.error("[Pauline] - Erreur dans detectSpacesToolbarIsDark:", e);
+    return false;
+  }
+}
+
+function setupSpacesToolbarTheme(w, retryCount = 0) {
+  try {
+    if (!w || !w.document) return;
+    injectThemeOverrideStyle(w);
+
+    const toolbar = w.document.getElementById("spacesToolbar");
+    if (!toolbar) {
+      if (retryCount < 40) {
+        w.setTimeout(() => setupSpacesToolbarTheme(w, retryCount + 1), 250);
+      }
+      return;
+    }
+
+    if (w._pauline_spaces_observer) {
+      try {
+        w._pauline_spaces_observer.disconnect();
+      } catch (e) { }
+      w._pauline_spaces_observer = null;
+    }
+
+    let isUpdatingTheme = false;
+    const updateToolbarTheme = () => {
+      if (isUpdatingTheme) return;
+      isUpdatingTheme = true;
+      try {
+        injectThemeOverrideStyle(w);
+        normalizeSpacesAddonButtonIcons(w);
+
+        const isDark = detectSpacesToolbarIsDark(w, toolbar);
         const mode = isDark ? "dark" : "light";
-        if (toolbar.getAttribute("data-theme-mode") !== mode) {
+        const root = w.document.documentElement;
+        if (
+          toolbar.getAttribute("data-theme-mode") !== mode ||
+          root?.getAttribute("data-spaces-theme-mode") !== mode
+        ) {
           toolbar.setAttribute("data-theme-mode", mode);
-          w.document.documentElement?.setAttribute("data-spaces-theme-mode", mode);
+          root?.setAttribute("data-spaces-theme-mode", mode);
           console.log(`[Pauline] - Thème spacesToolbar détecté: ${mode}`);
         }
       } catch (e) {
         console.error("[Pauline] - Erreur détection thème:", e);
+      } finally {
+        isUpdatingTheme = false;
       }
     };
+
+    const scheduleThemeChecks = () => {
+      updateToolbarTheme();
+      w.setTimeout(updateToolbarTheme, 100);
+      w.setTimeout(updateToolbarTheme, 350);
+    };
+
+    w._pauline_updateToolbarTheme = updateToolbarTheme;
 
     if (w._pauline_theme_listener) {
       try {
@@ -80,8 +261,8 @@ function setupSpacesToolbarTheme(w) {
       } catch (e) { }
       w._pauline_theme_listener = null;
     }
-    w._pauline_theme_listener = updateToolbarTheme;
-    w.addEventListener("windowlwthemeupdate", updateToolbarTheme);
+    w._pauline_theme_listener = scheduleThemeChecks;
+    w.addEventListener("windowlwthemeupdate", scheduleThemeChecks);
 
     if (w._pauline_media_listener && w._pauline_mql?.removeEventListener) {
       try {
@@ -92,27 +273,60 @@ function setupSpacesToolbarTheme(w) {
       const mql = w.matchMedia("(prefers-color-scheme: dark)");
       if (mql?.addEventListener) {
         w._pauline_mql = mql;
-        w._pauline_media_listener = updateToolbarTheme;
-        mql.addEventListener("change", updateToolbarTheme);
+        w._pauline_media_listener = scheduleThemeChecks;
+        mql.addEventListener("change", scheduleThemeChecks);
       }
+    } catch (e) { }
+
+    try {
+      const observer = new (w.MutationObserver || MutationObserver)(() => {
+        updateToolbarTheme();
+      });
+      if (w.document.documentElement) {
+        observer.observe(w.document.documentElement, {
+          attributes: true,
+          attributeFilter: ["style", "lwtheme", "lwtheme-brighttext", "lwt-toolbar", "lwt-tree-brighttext"],
+        });
+      }
+      observer.observe(toolbar, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["hidden", "style", "data-theme-mode"],
+      });
+      w._pauline_spaces_observer = observer;
     } catch (e) { }
 
     updateToolbarTheme();
     w.setTimeout(updateToolbarTheme, 200);
     w.setTimeout(updateToolbarTheme, 500);
     w.setTimeout(updateToolbarTheme, 1500);
+    w.setTimeout(updateToolbarTheme, 3000);
   } catch (err) {
     console.error("[Pauline] - Erreur dans setupSpacesToolbarTheme:", err);
   }
 }
 
+let _paulineGlobalListenersRegistered = false;
+
 function initSpacesTheme(context) {
   try {
     const WM = Cc["@mozilla.org/appshell/window-mediator;1"]?.getService(Ci.nsIWindowMediator) || Services.wm;
-    const win = WM.getMostRecentWindow("mail:3pane") || WM.getMostRecentWindow(null);
-    if (win) {
-      setupSpacesToolbarTheme(win);
+    const enumerator = WM.getEnumerator("mail:3pane");
+    while (enumerator.hasMoreElements()) {
+      const win = enumerator.getNext();
+      if (!win._pauline_window_init_done) {
+        win._pauline_window_init_done = true;
+        setupSpacesToolbarTheme(win);
+      } else if (typeof win._pauline_updateToolbarTheme === "function") {
+        win._pauline_updateToolbarTheme();
+      }
     }
+
+    if (_paulineGlobalListenersRegistered) {
+      return;
+    }
+    _paulineGlobalListenersRegistered = true;
 
     const docObserver = {
       observe(subject, topic, data) {
@@ -135,15 +349,30 @@ function initSpacesTheme(context) {
     if (context?.callOnClose) {
       context.callOnClose({
         close() {
+          _paulineGlobalListenersRegistered = false;
           try {
             Services.obs.removeObserver(docObserver, "chrome-document-loaded");
           } catch (e) { }
           try {
-            if (win?._pauline_theme_listener) {
-              win.removeEventListener("windowlwthemeupdate", win._pauline_theme_listener);
-            }
-            if (win?._pauline_media_listener && win?._pauline_mql?.removeEventListener) {
-              win._pauline_mql.removeEventListener("change", win._pauline_media_listener);
+            const winEnum = WM.getEnumerator("mail:3pane");
+            while (winEnum.hasMoreElements()) {
+              const w = winEnum.getNext();
+              if (w._pauline_spaces_observer) {
+                try {
+                  w._pauline_spaces_observer.disconnect();
+                } catch (_) {}
+                w._pauline_spaces_observer = null;
+              }
+              if (w._pauline_theme_listener) {
+                w.removeEventListener("windowlwthemeupdate", w._pauline_theme_listener);
+                w._pauline_theme_listener = null;
+              }
+              if (w._pauline_media_listener && w._pauline_mql?.removeEventListener) {
+                w._pauline_mql.removeEventListener("change", w._pauline_media_listener);
+                w._pauline_media_listener = null;
+              }
+              w._pauline_updateToolbarTheme = null;
+              w._pauline_window_init_done = false;
             }
           } catch (e) { }
         }

@@ -51,20 +51,25 @@ async function createSpaceButton() {
     const defaultUrl = browser.runtime.getURL("content/pauline.html");
     const buttonProperties = {
       title: "Annuaire",
+      defaultIcons: {
+        "16": "skin/images/annuaire_dark.svg",
+        "18": "skin/images/annuaire_dark.svg",
+        "32": "skin/images/annuaire_dark.svg",
+      },
       themeIcons: [
         {
-          "dark": "skin/images/annuaire_light.svg",
-          "light": "skin/images/annuaire_dark.svg",
+          "dark": "skin/images/annuaire_dark.svg",
+          "light": "skin/images/annuaire_light.svg",
           "size": 16
         },
         {
-          "dark": "skin/images/annuaire_light.svg",
-          "light": "skin/images/annuaire_dark.svg",
+          "dark": "skin/images/annuaire_dark.svg",
+          "light": "skin/images/annuaire_light.svg",
           "size": 18
         },
         {
-          "dark": "skin/images/annuaire_light.svg",
-          "light": "skin/images/annuaire_dark.svg",
+          "dark": "skin/images/annuaire_dark.svg",
+          "light": "skin/images/annuaire_light.svg",
           "size": 32
         }
       ]
@@ -72,6 +77,9 @@ async function createSpaceButton() {
 
     await registerOrUpdateSpace(spaceName, defaultUrl, buttonProperties);
     console.log(`[Pauline] - Space button initialisé avec succès`);
+    try {
+      browser.domapi?.init?.();
+    } catch (e) { }
   } catch (error) {
     console.error("[Pauline] - Error creating/updating space:", error);
   }
@@ -81,7 +89,7 @@ async function waitForMailTabAndRun() {
   const tabs = await browser.tabs.query({});
 
   for (const tab of tabs) {
-    if (tab.mailTab) {
+    if (tab.mailTab || tab.type === "mail") {
       createSpaceButton();
       return;
     }
@@ -89,7 +97,7 @@ async function waitForMailTabAndRun() {
 
   // Wait until a mail tab is created
   browser.tabs.onCreated.addListener(async (tab) => {
-    if (tab.mailTab) {
+    if (tab.mailTab || tab.type === "mail") {
       createSpaceButton();
     }
   });
